@@ -19,7 +19,7 @@
 
     /* ─── Sidebar ─── */
     .sidebar {
-      width: 210px;
+      width: 240px;
       background: #fff;
       border-right: 1px solid #e9e9e9;
       display: flex;
@@ -155,13 +155,115 @@
     }
     .back-title-chevron {
       width: 28px; height: 28px;
-      border: 1px solid #d0d5e8;
-      border-radius: 6px;
-      background: #fff;
       display: flex; align-items: center; justify-content: center;
       color: #555;
       flex-shrink: 0;
+      transition: color 0.13s;
     }
+    .back-title:hover .back-title-chevron { color: #2a3766; }
+
+    /* Table toolbar */
+    .table-toolbar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-bottom: 1px solid #e9e9e9;
+    }
+    .search-wrap {
+      position: relative; flex: 1; max-width: 320px;
+    }
+    .search-wrap svg {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: #aaa; pointer-events: none;
+    }
+    .search-input {
+      width: 100%; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 7px 10px 7px 32px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; color: #1a1a2e;
+      background: #fff; outline: none;
+      transition: border-color 0.13s, box-shadow 0.13s;
+    }
+    .search-input:focus { border-color: #2a3766; box-shadow: 0 0 0 3px rgba(42,55,102,0.09); }
+    .search-input::placeholder { color: #bbb; }
+
+    /* Column header with sort / filter */
+    th { position: relative; }
+    .th-cell {
+      display: flex; align-items: center; gap: 4px; white-space: nowrap;
+    }
+    .th-inner {
+      display: inline-flex; align-items: center; gap: 5px; cursor: pointer; user-select: none;
+    }
+    .th-inner:hover { color: #2a3766; }
+    .sort-icon { color: #ccc; flex-shrink: 0; transition: color 0.12s; }
+    .th-inner:hover .sort-icon, .th-inner.asc .sort-icon, .th-inner.desc .sort-icon { color: #2a3766; }
+
+    .filter-btn {
+      position: relative;
+      background: none; border: none; padding: 2px; cursor: pointer;
+      color: #ccc; display: inline-flex; align-items: center; border-radius: 4px;
+      transition: color 0.12s, background 0.12s; flex-shrink: 0;
+    }
+    .filter-btn:hover { color: #555; background: #eef0f8; }
+    .filter-btn.active { color: #2a3766; }
+    .filter-btn.active::after {
+      content: ''; position: absolute; top: 1px; right: 1px;
+      width: 5px; height: 5px; border-radius: 50%; background: #4a6cf7;
+    }
+
+    /* Filter dropdown */
+    .filter-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0; z-index: 200;
+      background: #fff; border: 1px solid #d0d5e8; border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12); min-width: 172px;
+      padding: 4px 0; display: none;
+    }
+    .filter-dropdown.open { display: block; animation: fadeIn 0.1s ease forwards; }
+    .filter-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px 6px; font-size: 11px; font-weight: 700;
+      color: #aaa; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .filter-select-all {
+      font-size: 11px; font-weight: 600; color: #2a3766; cursor: pointer; text-transform: none; letter-spacing: 0;
+    }
+    .filter-select-all:hover { text-decoration: underline; }
+    .filter-option {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 14px; font-size: 12px; font-weight: 500; color: #333;
+      cursor: pointer; transition: background 0.1s; user-select: none;
+    }
+    .filter-option:hover { background: #f0f2f8; }
+    .filter-option input[type="checkbox"] { accent-color: #2a3766; width: 13px; height: 13px; cursor: pointer; }
+    .filter-divider { height: 1px; background: #f0f2f5; margin: 4px 0; }
+    .filter-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 6px 14px 8px; gap: 10px;
+    }
+    .filter-clear {
+      font-size: 11px; font-weight: 600; color: #999; cursor: pointer; transition: color 0.1s;
+    }
+    .filter-clear:hover { color: #cc3a33; }
+    .filter-apply {
+      font-size: 11px; font-weight: 700; color: #2a3766; cursor: pointer; transition: color 0.1s;
+    }
+    .filter-apply:hover { text-decoration: underline; }
+
+    /* Pagination */
+    .pagination {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 4px; padding: 14px 20px; border-top: 1px solid #f0f2f5;
+    }
+    .page-btn {
+      min-width: 32px; height: 32px; padding: 0 8px;
+      border: 1px solid #d0d5e8; border-radius: 6px;
+      background: #fff; font-family: 'Open Sans', sans-serif;
+      font-size: 12px; font-weight: 600; color: #555;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .page-btn:hover { background: #f0f2f8; border-color: #b8bfd6; }
+    .page-btn.active { background: #2a3766; color: #fff; border-color: #2a3766; cursor: default; }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+    .page-info { font-size: 12px; color: #888; margin-right: 8px; }
     .back-title-text { font-size: 20px; font-weight: 700; color: #1a1a2e; }
 
     /* Unified field */
@@ -454,7 +556,7 @@
     <img src="https://www.cognia.org/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2019/08/cropped-logo-300.png.webp" alt="Cognia" style="height:32px;width:auto;display:block;">
   </div>
   <nav>
-    <div class="nav-item active" data-page="dashboard">
+    <div class="nav-item" data-page="">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Dashboard
     </div>
@@ -494,18 +596,14 @@
       <div class="icon-btn">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </div>
-      <div class="avatar">A</div>
-      <div class="user-label">
-        School Admin
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
+      <div class="avatar" style="font-size:11px;">AJ</div>
     </div>
   </header>
 
   <!-- ════════════════════════════
        DASHBOARD
   ═════════════════════════════ -->
-  <div class="page active" id="page-dashboard">
+  <div class="page" id="page-dashboard">
     <h1 class="page-title">School Administrator Dashboard</h1>
     <p class="page-subtitle">Welcome back! Here's an overview of your assessment activities</p>
     <div class="stats-grid">
@@ -560,7 +658,7 @@
       <div class="tm-header">
         <div class="tm-title-group">
           <span class="tm-title">Assessment Tests</span>
-          <span class="tm-count">3 tests</span>
+          <span class="tm-count">15 tests</span>
         </div>
         <button class="btn-primary" id="btn-create-test">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -569,44 +667,178 @@
       </div>
 
       <div class="card">
+        <div class="table-toolbar">
+          <div class="search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" id="table-search" type="text" placeholder="Search tests…">
+          </div>
+        </div>
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Identifier</th>
-              <th>Type</th>
-              <th>Structure</th>
-              <th>Date of Test</th>
-              <th>Status</th>
+              <th><div class="th-cell"><span class="th-inner" data-col="0">Name<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="1">Identifier<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th>
+                <div class="th-cell">
+                  <span class="th-inner" data-col="2">Type<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span>
+                  <button class="filter-btn" id="type-filter-btn" title="Filter by Type"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
+                </div>
+                <div class="filter-dropdown" id="type-filter-dropdown">
+                  <div class="filter-header">Filter by Type <span class="filter-select-all" id="type-select-all">Select all</span></div>
+                  <label class="filter-option"><input type="checkbox" value="Formative"> Formative</label>
+                  <label class="filter-option"><input type="checkbox" value="Summative"> Summative</label>
+                  <label class="filter-option"><input type="checkbox" value="Interim"> Interim</label>
+                  <div class="filter-divider"></div>
+                  <div class="filter-footer">
+                    <span class="filter-clear" id="type-filter-clear">Clear</span>
+                  </div>
+                </div>
+              </th>
+              <th><div class="th-cell"><span class="th-inner" data-col="3">Structure<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="4">Date of Test<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th>
+                <div class="th-cell">
+                  <span class="th-inner" data-col="5">Status<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span>
+                  <button class="filter-btn" id="status-filter-btn" title="Filter by Status"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
+                </div>
+                <div class="filter-dropdown" id="status-filter-dropdown">
+                  <div class="filter-header">Filter by Status <span class="filter-select-all" id="status-select-all">Select all</span></div>
+                  <label class="filter-option"><input type="checkbox" value="Completed"> Completed</label>
+                  <label class="filter-option"><input type="checkbox" value="Scheduled"> Scheduled</label>
+                  <label class="filter-option"><input type="checkbox" value="Cancelled"> Cancelled</label>
+                  <label class="filter-option"><input type="checkbox" value="Draft"> Draft</label>
+                  <div class="filter-divider"></div>
+                  <div class="filter-footer">
+                    <span class="filter-clear" id="status-filter-clear">Clear</span>
+                  </div>
+                </div>
+              </th>
             </tr>
           </thead>
-          <tbody>
-            <tr class="test-row" data-test="demo-epiuse">
-              <td><div class="td-title">Demo</div></td>
-              <td><span class="td-date">EPIUSE Demo</span></td>
+          <tbody id="test-table-body">
+            <tr class="test-row" data-test="1">
+              <td><div class="td-title">Place Value and Number Sense</div></td>
+              <td><span class="td-date">Section 1-1</span></td>
+              <td><span class="type-badge summative">Summative</span></td>
+              <td><span class="td-structure">2 parts · 4 sections · 8 items</span></td>
+              <td><span class="td-date">15 Mar 2025</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="2">
+              <td><div class="td-title">Addition and Subtraction to 10,000</div></td>
+              <td><span class="td-date">Section 1-2</span></td>
               <td><span class="type-badge formative">Formative</span></td>
-              <td><span class="td-structure">1 part · 1 section · 2 items</span></td>
+              <td><span class="td-structure">1 part · 2 sections · 5 items</span></td>
+              <td><span class="td-date">10 Feb 2025</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="3">
+              <td><div class="td-title">Multiplication Concepts and Strategies</div></td>
+              <td><span class="td-date">Section 2-1</span></td>
+              <td><span class="type-badge summative">Summative</span></td>
+              <td><span class="td-structure">2 parts · 3 sections · 6 items</span></td>
+              <td><span class="td-date">14 Oct 2025</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="4">
+              <td><div class="td-title">Division Facts and Relationships</div></td>
+              <td><span class="td-date">Section 2-2</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
+              <td><span class="td-date">01 Dec 2025</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="5">
+              <td><div class="td-title">Multi-Digit Multiplication</div></td>
+              <td><span class="td-date">Section 2-3</span></td>
+              <td><span class="type-badge interim">Interim</span></td>
+              <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
               <td><span class="td-date">20 Nov 2025</span></td>
               <td><span class="status-badge scheduled">Scheduled</span></td>
             </tr>
-            <tr class="test-row" data-test="demo-nov20">
-              <td><div class="td-title">Demo</div><div class="td-sub">Demo Nov 20</div></td>
-              <td><span class="td-date">Test Nov 20</span></td>
+            <tr class="test-row" data-test="6">
+              <td><div class="td-title">Fractions – Equivalence and Ordering</div></td>
+              <td><span class="td-date">Section 3-1</span></td>
               <td><span class="type-badge summative">Summative</span></td>
-              <td><span class="td-structure">1 part · 1 section · 2 items</span></td>
+              <td><span class="td-structure">2 parts · 3 sections · 5 items</span></td>
               <td><span class="td-date">20 Nov 2025</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="7">
+              <td><div class="td-title">Adding and Subtracting Fractions</div></td>
+              <td><span class="td-date">Section 3-2</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td><span class="td-structure">1 part · 1 section · 4 items</span></td>
+              <td><span class="td-date">05 Sep 2025</span></td>
               <td><span class="status-badge completed">Completed</span></td>
             </tr>
-            <tr class="test-row" data-test="math-grade5">
-              <td><div class="td-title">Math Grade 5 Test</div></td>
-              <td><span class="td-date">Math Grade 5 Test</span></td>
+            <tr class="test-row" data-test="8">
+              <td><div class="td-title">Decimals – Tenths and Hundredths</div></td>
+              <td><span class="td-date">Section 3-3</span></td>
               <td><span class="type-badge interim">Interim</span></td>
-              <td><span class="td-structure">2 parts · 3 sections · 6 items</span></td>
-              <td><span class="td-date">14 Oct 2025</span></td>
+              <td><span class="td-structure">1 part · 2 sections · 5 items</span></td>
+              <td><span class="td-date">22 Aug 2025</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="9">
+              <td><div class="td-title">Measurement – Length, Mass and Capacity</div></td>
+              <td><span class="td-date">Section 4-1</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
+              <td><span class="td-date">15 Jan 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="10">
+              <td><div class="td-title">Area and Perimeter</div></td>
+              <td><span class="td-date">Section 4-2</span></td>
+              <td><span class="type-badge summative">Summative</span></td>
+              <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
+              <td><span class="td-date">30 Nov 2025</span></td>
+              <td><span class="status-badge cancelled">Cancelled</span></td>
+            </tr>
+            <tr class="test-row" data-test="11">
+              <td><div class="td-title">Time – Elapsed Time and Schedules</div></td>
+              <td><span class="td-date">Section 4-3</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td><span class="td-structure">2 parts · 2 sections · 5 items</span></td>
+              <td><span class="td-date">28 Feb 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="12">
+              <td><div class="td-title">Geometry – Angles and Lines</div></td>
+              <td><span class="td-date">Section 5-1</span></td>
+              <td><span class="type-badge summative">Summative</span></td>
+              <td><span class="td-structure">3 parts · 5 sections · 10 items</span></td>
+              <td><span class="td-date">12 Dec 2025</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="13">
+              <td><div class="td-title">2D Shapes and Symmetry</div></td>
+              <td><span class="td-date">Section 5-2</span></td>
+              <td><span class="type-badge summative">Summative</span></td>
+              <td><span class="td-structure">2 parts · 3 sections · 7 items</span></td>
+              <td><span class="td-date">15 Mar 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="14">
+              <td><div class="td-title">Data – Tables, Bar Graphs and Line Plots</div></td>
+              <td><span class="td-date">Section 6-1</span></td>
+              <td><span class="type-badge interim">Interim</span></td>
+              <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
+              <td><span class="td-date">01 Apr 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="15">
+              <td><div class="td-title">Number Patterns and Algebraic Thinking</div></td>
+              <td><span class="td-date">Section 6-2</span></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
+              <td><span class="td-date">10 Jan 2026</span></td>
               <td><span class="status-badge draft">Draft</span></td>
             </tr>
           </tbody>
         </table>
+        <div class="pagination" id="pagination"></div>
       </div>
     </div>
   </div>
@@ -666,35 +898,52 @@
           <div class="grid-2" style="margin-bottom:16px">
             <div class="field-group">
               <div class="field-label">Identifier</div>
-              <div class="view-field">Math Grade 5 Test</div>
-              <input class="field-input" type="text" value="Math Grade 5 Test">
+              <div class="view-field" id="detail-vf-identifier"></div>
+              <input class="field-input" id="detail-in-identifier" type="text">
             </div>
             <div class="field-group">
-              <div class="field-label">Title</div>
-              <div class="view-field">Math Grade 5 Test</div>
-              <input class="field-input" type="text" value="Math Grade 5 Test">
+              <div class="field-label">Name</div>
+              <div class="view-field" id="detail-vf-name"></div>
+              <input class="field-input" id="detail-in-name" type="text">
+            </div>
+          </div>
+          <div class="grid-3" style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Type</div>
+              <div class="view-field" id="detail-vf-type"></div>
+              <input class="field-input" id="detail-in-type" type="text">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Status</div>
+              <div class="view-field" id="detail-vf-status"></div>
+              <input class="field-input" id="detail-in-status" type="text">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Date of Test</div>
+              <div class="view-field" id="detail-vf-date"></div>
+              <input class="field-input" id="detail-in-date" type="text">
             </div>
           </div>
           <div class="field-group" style="margin-bottom:16px">
             <div class="field-label">Description</div>
-            <div class="view-field multiline">Math Grade 5 Test</div>
-            <textarea class="field-input">Math Grade 5 Test</textarea>
+            <div class="view-field multiline" id="detail-vf-description"></div>
+            <textarea class="field-input" id="detail-in-description"></textarea>
           </div>
           <div class="grid-3">
             <div class="field-group">
               <div class="field-label">Language</div>
-              <div class="view-field">en-US</div>
-              <input class="field-input" type="text" value="en-US">
+              <div class="view-field" id="detail-vf-language">en-US</div>
+              <input class="field-input" id="detail-in-language" type="text" value="en-US">
             </div>
             <div class="field-group">
               <div class="field-label">Tool Name</div>
-              <div class="view-field">Cognia TEI authoring system</div>
-              <input class="field-input" type="text" value="Cognia TEI authoring system">
+              <div class="view-field" id="detail-vf-toolname">Cognia TEI authoring system</div>
+              <input class="field-input" id="detail-in-toolname" type="text" value="Cognia TEI authoring system">
             </div>
             <div class="field-group">
               <div class="field-label">Tool Version</div>
-              <div class="view-field">1.0.0</div>
-              <input class="field-input" type="text" value="1.0.0">
+              <div class="view-field" id="detail-vf-toolversion">1.0.0</div>
+              <input class="field-input" id="detail-in-toolversion" type="text" value="1.0.0">
             </div>
           </div>
         </div>
@@ -829,11 +1078,11 @@
             <div class="create-form-actions">
               <div></div>
               <div style="display:flex;gap:8px;align-items:center;">
+                <button class="btn-ghost" id="btn-create-cancel" style="padding:9px 20px;font-size:13px;">Cancel</button>
                 <button class="btn-primary">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   Create Test
                 </button>
-                <button class="btn-ghost" id="btn-create-cancel">Cancel</button>
               </div>
             </div>
           </div>
@@ -843,7 +1092,7 @@
         <div class="ref-panel">
           <div class="ref-panel-header">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#2a3766"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            QTI 3.0 Structure
+            Test Structure
           </div>
           <div class="ref-panel-body">
             <div class="ref-section-title">Hierarchy</div>
@@ -880,6 +1129,175 @@
     if (nav) nav.classList.add('active');
   }
 
+  // ── Table: search, sort, filter, paginate ──
+  const ROWS_PER_PAGE = 10;
+  let currentPage = 1;
+  let sortCol = -1, sortAsc = true;
+  let searchQuery = '';
+  let typeFilters = new Set();
+  let statusFilters = new Set();
+
+  const allRows = Array.from(document.querySelectorAll('#test-table-body .test-row'));
+
+  function getCellText(row, col) {
+    const cells = row.querySelectorAll('td');
+    return cells[col] ? cells[col].textContent.trim() : '';
+  }
+
+  function applyTable() {
+    // Filter
+    let visible = allRows.filter(row => {
+      const name = getCellText(row, 0).toLowerCase();
+      const id   = getCellText(row, 1).toLowerCase();
+      const type = getCellText(row, 2).trim();
+      const status = getCellText(row, 5).trim();
+      const q = searchQuery.toLowerCase();
+      const matchSearch = !q || name.includes(q) || id.includes(q);
+      const matchType   = typeFilters.size === 0 || typeFilters.has(type);
+      const matchStatus = statusFilters.size === 0 || statusFilters.has(status);
+      return matchSearch && matchType && matchStatus;
+    });
+
+    // Sort
+    if (sortCol >= 0) {
+      visible.sort((a, b) => {
+        const va = getCellText(a, sortCol).toLowerCase();
+        const vb = getCellText(b, sortCol).toLowerCase();
+        return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+      });
+    }
+
+    // Hide all, show sorted/filtered
+    allRows.forEach(r => { r.style.display = 'none'; r.parentNode.appendChild(r); });
+    visible.forEach(r => r.parentNode.appendChild(r));
+
+    // Paginate
+    const totalPages = Math.max(1, Math.ceil(visible.length / ROWS_PER_PAGE));
+    if (currentPage > totalPages) currentPage = 1;
+    visible.forEach((row, i) => {
+      row.style.display = (i >= (currentPage - 1) * ROWS_PER_PAGE && i < currentPage * ROWS_PER_PAGE) ? '' : 'none';
+    });
+
+    // Pagination UI
+    const pg = document.getElementById('pagination');
+    pg.innerHTML = '';
+    if (visible.length === 0) { pg.innerHTML = '<span class="page-info">No results</span>'; return; }
+
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    const start = (currentPage - 1) * ROWS_PER_PAGE + 1;
+    const end = Math.min(currentPage * ROWS_PER_PAGE, visible.length);
+    info.textContent = `${start}–${end} of ${visible.length}`;
+    pg.appendChild(info);
+
+    const prev = document.createElement('button');
+    prev.className = 'page-btn';
+    prev.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>';
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', () => { currentPage--; applyTable(); });
+    pg.appendChild(prev);
+
+    for (let p = 1; p <= totalPages; p++) {
+      const btn = document.createElement('button');
+      btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+      btn.textContent = p;
+      btn.addEventListener('click', () => { currentPage = p; applyTable(); });
+      pg.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.className = 'page-btn';
+    next.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', () => { currentPage++; applyTable(); });
+    pg.appendChild(next);
+  }
+
+  // Sort headers
+  document.querySelectorAll('.th-inner').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = parseInt(th.dataset.col);
+      if (sortCol === col) { sortAsc = !sortAsc; }
+      else { sortCol = col; sortAsc = true; }
+      document.querySelectorAll('.th-inner').forEach(t => t.classList.remove('asc','desc'));
+      th.classList.add(sortAsc ? 'asc' : 'desc');
+      currentPage = 1; applyTable();
+    });
+  });
+
+  // Search
+  document.getElementById('table-search').addEventListener('input', e => {
+    searchQuery = e.target.value; currentPage = 1; applyTable();
+  });
+
+  // Filter dropdowns
+  const allDropdowns = [];
+
+  function closeAllDropdowns(except) {
+    allDropdowns.forEach(({ dd, btn }) => {
+      if (dd !== except) { dd.classList.remove('open'); btn.classList.remove('open'); }
+    });
+  }
+
+  function updateFilterBtnState(btn, dd, filterSet) {
+    const isFiltered = filterSet.size > 0;
+    btn.classList.toggle('active', isFiltered);
+  }
+
+  function initFilterDropdown(btnId, dropdownId, clearId, selectAllId, filterSet) {
+    const btn = document.getElementById(btnId);
+    const dd  = document.getElementById(dropdownId);
+    allDropdowns.push({ dd, btn });
+
+    // Toggle open
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = dd.classList.contains('open');
+      closeAllDropdowns(dd);
+      dd.classList.toggle('open', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+    });
+
+    // Stop clicks inside dropdown from closing it
+    dd.addEventListener('click', e => e.stopPropagation());
+
+    // Checkboxes
+    dd.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) filterSet.add(cb.value); else filterSet.delete(cb.value);
+        updateFilterBtnState(btn, dd, filterSet);
+        currentPage = 1; applyTable();
+      });
+    });
+
+    // Clear
+    document.getElementById(clearId).addEventListener('click', () => {
+      dd.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; filterSet.delete(cb.value); });
+      updateFilterBtnState(btn, dd, filterSet);
+      currentPage = 1; applyTable();
+    });
+
+    // Select all
+    document.getElementById(selectAllId).addEventListener('click', () => {
+      dd.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = true; filterSet.add(cb.value); });
+      updateFilterBtnState(btn, dd, filterSet);
+      currentPage = 1; applyTable();
+    });
+  }
+
+  initFilterDropdown('type-filter-btn', 'type-filter-dropdown', 'type-filter-clear', 'type-select-all', typeFilters);
+  initFilterDropdown('status-filter-btn', 'status-filter-dropdown', 'status-filter-clear', 'status-select-all', statusFilters);
+
+  // Close on outside click
+  document.addEventListener('click', () => closeAllDropdowns(null));
+
+  // Close on Escape
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllDropdowns(null); });
+
+  // Default landing page
+  showPage('test-management');
+  applyTable();
+
   // Sidebar nav
   navItems.forEach(item => {
     item.addEventListener('click', () => {
@@ -890,14 +1308,31 @@
   // ── Test list: click row → detail view ──
   document.querySelectorAll('.test-row').forEach(row => {
     row.addEventListener('click', () => {
-      // Set the title based on the row clicked
-      const titleEl = row.querySelector('.td-title');
-      const testTitle = titleEl ? titleEl.textContent.trim() : 'Assessment Test';
-      document.getElementById('detail-title').textContent = testTitle;
+      const cells = row.querySelectorAll('td');
+      const name       = cells[0] ? cells[0].querySelector('.td-title')?.textContent.trim() : '';
+      const identifier = cells[1] ? cells[1].textContent.trim() : '';
+      const type       = cells[2] ? cells[2].textContent.trim() : '';
+      const structure  = cells[3] ? cells[3].textContent.trim() : '';
+      const date       = cells[4] ? cells[4].textContent.trim() : '';
+      const status     = cells[5] ? cells[5].textContent.trim() : '';
 
-      // Ensure we're in view mode
+      // Header title
+      document.getElementById('detail-title').textContent = name;
+
+      // Populate view fields and inputs
+      const set = (vfId, inId, val) => {
+        const vf = document.getElementById(vfId); if (vf) vf.textContent = val;
+        const inp = document.getElementById(inId);
+        if (inp) { if (inp.tagName === 'TEXTAREA') inp.textContent = val; else inp.value = val; }
+      };
+      set('detail-vf-identifier',  'detail-in-identifier',  identifier);
+      set('detail-vf-name',        'detail-in-name',        name);
+      set('detail-vf-type',        'detail-in-type',        type);
+      set('detail-vf-status',      'detail-in-status',      status);
+      set('detail-vf-date',        'detail-in-date',        date);
+      set('detail-vf-description', 'detail-in-description', '');
+
       setMetadataMode('view');
-
       showPage('view-test', 'test-management');
     });
   });
