@@ -546,6 +546,137 @@
 
     /* View/Edit state toggle on Save button */
     .save-actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 8px; }
+
+    /* ─── Test Builder Wizard ─── */
+    .wz-hidden { display: none !important; }
+    .wz-progress { height: 3px; background: #e9e9e9; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+    .wz-progress-fill { height: 100%; background: linear-gradient(90deg, #2a3766, #75138c); border-radius: 2px; transition: width 0.4s ease; }
+    .wz-steps { display: flex; background: #fff; border: 1px solid #e9e9e9; border-radius: 8px; padding: 4px; margin-bottom: 24px; gap: 2px; }
+    .wz-step { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #999; cursor: default; transition: all 0.2s; white-space: nowrap; }
+    .wz-step.active { background: #2a3766; color: #fff; }
+    .wz-step.done { color: #2dbe6c; }
+    .wz-step-num { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .wz-step.active .wz-step-num { background: rgba(255,255,255,0.2); border-color: transparent; }
+    .wz-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 28px; margin-bottom: 20px; }
+    .wz-card-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .wz-card-desc { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.5; }
+    .wz-name-input { font-size: 18px !important; padding: 14px 18px !important; }
+    .wz-sections-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .wz-section-item { display: flex; align-items: center; gap: 10px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 10px 14px; transition: border-color 0.15s; animation: fadeIn 0.15s ease; }
+    .wz-section-item:focus-within { border-color: #2a3766; }
+    .wz-section-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .wz-section-item input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e; }
+    .wz-section-count { font-size: 12px; color: #999; white-space: nowrap; }
+    .wz-add-section-row { display: flex; gap: 10px; }
+    .wz-q-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .wz-section-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .wz-section-tab { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #e9e9e9; background: #f7f8fa; color: #555; transition: all 0.15s; }
+    .wz-section-tab.active { border-color: #2a3766; color: #2a3766; background: #eef0f8; }
+    .wz-tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .wz-tab-count { background: #e9e9e9; border-radius: 10px; padding: 1px 6px; font-size: 11px; }
+    .wz-section-tab.active .wz-tab-count { background: #d0d5e8; }
+    .wz-bank-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .wz-bank-title { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+    .wz-badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #eef0f8; color: #2a3766; }
+    .wz-search-bar { position: relative; margin-bottom: 10px; }
+    .wz-search-bar input { width: 100%; padding: 8px 12px 8px 34px; border: 1.5px solid #dde1ed; border-radius: 6px; font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e; background: #f7f8fa; outline: none; transition: border-color 0.15s; }
+    .wz-search-bar input:focus { border-color: #2a3766; background: #fff; }
+    .wz-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
+    .wz-filter-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+    .wz-chip { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e9e9e9; background: #f7f8fa; color: #888; transition: all 0.12s; }
+    .wz-chip.active { border-color: #75138c; color: #75138c; background: #f9eeff; }
+    .wz-chip:hover { color: #1a1a2e; border-color: #bbb; }
+    .wz-question-list { display: flex; flex-direction: column; gap: 5px; max-height: 360px; overflow-y: auto; padding-right: 2px; }
+    .wz-question-list::-webkit-scrollbar { width: 3px; }
+    .wz-question-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
+    .wz-q-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 7px; cursor: pointer; transition: all 0.12s; }
+    .wz-q-item:hover { border-color: #2a3766; background: #eef0f8; }
+    .wz-q-item.selected { border-color: #2dbe6c; background: #edfaf3; opacity: 0.7; pointer-events: none; }
+    .wz-q-add-icon { font-size: 15px; color: #2a3766; flex-shrink: 0; margin-top: 2px; font-style: normal; font-weight: 700; }
+    .wz-q-item.selected .wz-q-add-icon { color: #2dbe6c; }
+    .wz-q-text { flex: 1; font-size: 12px; line-height: 1.4; color: #1a1a2e; }
+    .wz-q-meta { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+    .wz-q-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+    .wz-tag-mc { background: #eef0f8; color: #2a3766; }
+    .wz-tag-tf { background: #fff4ee; color: #c45000; }
+    .wz-tag-sa { background: #edfaf3; color: #1a9152; }
+    .wz-tag-easy { background: #edfaf3; color: #1a9152; }
+    .wz-tag-medium { background: #fff4ee; color: #c45000; }
+    .wz-tag-hard { background: #fff0ef; color: #cc3a33; }
+    .wz-selected-panel { display: flex; flex-direction: column; }
+    .wz-selected-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .wz-selected-list { display: flex; flex-direction: column; gap: 5px; max-height: 360px; overflow-y: auto; padding-right: 2px; }
+    .wz-selected-list::-webkit-scrollbar { width: 3px; }
+    .wz-selected-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
+    .wz-sel-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 7px; animation: fadeIn 0.15s ease; }
+    .wz-sel-num { width: 20px; height: 20px; border-radius: 5px; background: #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #555; flex-shrink: 0; margin-top: 1px; }
+    .wz-sel-text { flex: 1; font-size: 12px; line-height: 1.4; color: #1a1a2e; }
+    .wz-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; color: #bbb; border: 2px dashed #e9e9e9; border-radius: 8px; min-height: 180px; }
+    .wz-empty-icon { font-size: 28px; margin-bottom: 8px; }
+    .wz-empty-text { font-size: 12px; line-height: 1.5; }
+    .wz-summary-name { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .wz-summary-meta { font-size: 13px; color: #888; margin-bottom: 24px; }
+    .wz-summary-section { margin-bottom: 18px; }
+    .wz-summary-section-header { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9e9e9; }
+    .wz-summary-section-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .wz-summary-section-name { font-weight: 700; font-size: 14px; color: #1a1a2e; }
+    .wz-summary-section-count { font-size: 12px; color: #999; margin-left: auto; }
+    .wz-summary-q { display: flex; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f4f4f4; font-size: 12px; color: #555; }
+    .wz-summary-q:last-child { border-bottom: none; }
+    .wz-summary-q-num { color: #bbb; min-width: 18px; }
+    .wz-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+    .wz-nav-right { display: flex; gap: 8px; }
+    .wz-toast { position: fixed; bottom: 24px; right: 24px; background: #fff; border: 1px solid #e9e9e9; color: #1a1a2e; padding: 12px 18px; border-radius: 8px; font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.12); transform: translateY(70px); opacity: 0; transition: all 0.3s ease; z-index: 1000; }
+    .wz-toast.show { transform: translateY(0); opacity: 1; }
+    /* Drag handle */
+    .wz-drag-handle { color: #ccc; cursor: grab; font-size: 16px; padding: 0 2px; line-height: 1; flex-shrink: 0; }
+    .wz-drag-handle:active { cursor: grabbing; }
+    .wz-section-item { transition: transform 0.18s ease; }
+    .wz-section-item.wz-dragging { opacity: 0.25; cursor: grabbing; }
+    /* Student picker */
+    .wz-student-list { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
+    .wz-student-list::-webkit-scrollbar { width: 3px; }
+    .wz-student-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
+    .wz-student-item { display: flex; align-items: center; gap: 10px; padding: 8px 11px; border-radius: 7px; cursor: pointer; transition: background 0.12s; font-size: 13px; color: #1a1a2e; }
+    .wz-student-item:hover { background: #f0f2f8; }
+    .wz-student-item.selected { background: #eef0f8; }
+    .wz-student-cb { width: 15px; height: 15px; border: 1.5px solid #d0d5e8; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+    .wz-student-item.selected .wz-student-cb { background: #75138c; border-color: #75138c; color: #fff; font-size: 10px; }
+    .wz-student-count { font-size: 12px; color: #888; margin-top: 8px; }
+    /* Review items in schedule step */
+    .wz-review-section { margin-bottom: 12px; }
+    .wz-review-section-header { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px; }
+    .wz-review-item { font-size: 12px; color: #555; padding: 5px 0 5px 20px; border-bottom: 1px solid #f4f4f4; display: flex; gap: 8px; }
+    .wz-review-item:last-child { border-bottom: none; }
+    .wz-review-item-num { color: #bbb; min-width: 18px; flex-shrink: 0; }
+    /* Step tabs: done tabs are clickable */
+    .wz-step.done { cursor: pointer; }
+    .wz-step.done:hover { color: #1a9152; background: #f4fdf7; border-radius: 6px; }
+    /* Schedule step layout */
+    .wz-schedule-layout { display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
+    .wz-schedule-section-header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; }
+    .wz-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .wz-radio-card { display: block; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+    .wz-radio-card:hover { border-color: #d0d5e8; }
+    .wz-radio-card.wz-radio-selected { border-color: #75138c; background: #fdf8ff; }
+    .wz-radio-card input[type="radio"] { display: none; }
+    .wz-radio-inner { display: flex; align-items: flex-start; gap: 12px; }
+    .wz-radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #d0d5e8; flex-shrink: 0; margin-top: 2px; transition: all 0.15s; position: relative; }
+    .wz-radio-selected .wz-radio-dot { border-color: #75138c; background: #75138c; box-shadow: inset 0 0 0 3px #fff; }
+    .wz-radio-title { font-size: 13px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
+    .wz-radio-desc { font-size: 12px; color: #888; line-height: 1.4; }
+    /* Duration slider */
+    .wz-duration-slider { width: 100%; margin-bottom: 14px; accent-color: #75138c; cursor: pointer; height: 4px; }
+    .wz-duration-presets { display: flex; gap: 8px; flex-wrap: wrap; }
+    .wz-duration-preset { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #e9e9e9; background: #fff; color: #555; transition: all 0.12s; }
+    .wz-duration-preset:hover { border-color: #bbb; }
+    .wz-duration-active { border-color: #75138c !important; background: #75138c !important; color: #fff !important; }
+    /* Schedule sidebar */
+    .wz-schedule-sidebar { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 24px; align-self: start; }
+    .wz-sidebar-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; }
+    .wz-sidebar-row { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .wz-sidebar-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+    .wz-sidebar-value { font-size: 14px; color: #1a1a2e; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -677,7 +808,6 @@
           <thead>
             <tr>
               <th><div class="th-cell"><span class="th-inner" data-col="0">Name<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
-              <th><div class="th-cell"><span class="th-inner" data-col="1">Identifier<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
               <th>
                 <div class="th-cell">
                   <span class="th-inner" data-col="2">Type<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span>
@@ -718,7 +848,6 @@
           <tbody id="test-table-body">
             <tr class="test-row" data-test="1">
               <td><div class="td-title">Place Value and Number Sense</div></td>
-              <td><span class="td-date">Section 1-1</span></td>
               <td><span class="type-badge summative">Summative</span></td>
               <td><span class="td-structure">2 parts · 4 sections · 8 items</span></td>
               <td><span class="td-date">15 Mar 2025</span></td>
@@ -726,7 +855,6 @@
             </tr>
             <tr class="test-row" data-test="2">
               <td><div class="td-title">Addition and Subtraction to 10,000</div></td>
-              <td><span class="td-date">Section 1-2</span></td>
               <td><span class="type-badge formative">Formative</span></td>
               <td><span class="td-structure">1 part · 2 sections · 5 items</span></td>
               <td><span class="td-date">10 Feb 2025</span></td>
@@ -734,7 +862,6 @@
             </tr>
             <tr class="test-row" data-test="3">
               <td><div class="td-title">Multiplication Concepts and Strategies</div></td>
-              <td><span class="td-date">Section 2-1</span></td>
               <td><span class="type-badge summative">Summative</span></td>
               <td><span class="td-structure">2 parts · 3 sections · 6 items</span></td>
               <td><span class="td-date">14 Oct 2025</span></td>
@@ -742,7 +869,6 @@
             </tr>
             <tr class="test-row" data-test="4">
               <td><div class="td-title">Division Facts and Relationships</div></td>
-              <td><span class="td-date">Section 2-2</span></td>
               <td><span class="type-badge formative">Formative</span></td>
               <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
               <td><span class="td-date">01 Dec 2025</span></td>
@@ -750,7 +876,6 @@
             </tr>
             <tr class="test-row" data-test="5">
               <td><div class="td-title">Multi-Digit Multiplication</div></td>
-              <td><span class="td-date">Section 2-3</span></td>
               <td><span class="type-badge interim">Interim</span></td>
               <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
               <td><span class="td-date">20 Nov 2025</span></td>
@@ -758,7 +883,6 @@
             </tr>
             <tr class="test-row" data-test="6">
               <td><div class="td-title">Fractions – Equivalence and Ordering</div></td>
-              <td><span class="td-date">Section 3-1</span></td>
               <td><span class="type-badge summative">Summative</span></td>
               <td><span class="td-structure">2 parts · 3 sections · 5 items</span></td>
               <td><span class="td-date">20 Nov 2025</span></td>
@@ -766,7 +890,6 @@
             </tr>
             <tr class="test-row" data-test="7">
               <td><div class="td-title">Adding and Subtracting Fractions</div></td>
-              <td><span class="td-date">Section 3-2</span></td>
               <td><span class="type-badge formative">Formative</span></td>
               <td><span class="td-structure">1 part · 1 section · 4 items</span></td>
               <td><span class="td-date">05 Sep 2025</span></td>
@@ -774,7 +897,6 @@
             </tr>
             <tr class="test-row" data-test="8">
               <td><div class="td-title">Decimals – Tenths and Hundredths</div></td>
-              <td><span class="td-date">Section 3-3</span></td>
               <td><span class="type-badge interim">Interim</span></td>
               <td><span class="td-structure">1 part · 2 sections · 5 items</span></td>
               <td><span class="td-date">22 Aug 2025</span></td>
@@ -782,7 +904,6 @@
             </tr>
             <tr class="test-row" data-test="9">
               <td><div class="td-title">Measurement – Length, Mass and Capacity</div></td>
-              <td><span class="td-date">Section 4-1</span></td>
               <td><span class="type-badge formative">Formative</span></td>
               <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
               <td><span class="td-date">15 Jan 2026</span></td>
@@ -790,7 +911,6 @@
             </tr>
             <tr class="test-row" data-test="10">
               <td><div class="td-title">Area and Perimeter</div></td>
-              <td><span class="td-date">Section 4-2</span></td>
               <td><span class="type-badge summative">Summative</span></td>
               <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
               <td><span class="td-date">30 Nov 2025</span></td>
@@ -798,7 +918,6 @@
             </tr>
             <tr class="test-row" data-test="11">
               <td><div class="td-title">Time – Elapsed Time and Schedules</div></td>
-              <td><span class="td-date">Section 4-3</span></td>
               <td><span class="type-badge formative">Formative</span></td>
               <td><span class="td-structure">2 parts · 2 sections · 5 items</span></td>
               <td><span class="td-date">28 Feb 2026</span></td>
@@ -806,7 +925,6 @@
             </tr>
             <tr class="test-row" data-test="12">
               <td><div class="td-title">Geometry – Angles and Lines</div></td>
-              <td><span class="td-date">Section 5-1</span></td>
               <td><span class="type-badge summative">Summative</span></td>
               <td><span class="td-structure">3 parts · 5 sections · 10 items</span></td>
               <td><span class="td-date">12 Dec 2025</span></td>
@@ -814,7 +932,6 @@
             </tr>
             <tr class="test-row" data-test="13">
               <td><div class="td-title">2D Shapes and Symmetry</div></td>
-              <td><span class="td-date">Section 5-2</span></td>
               <td><span class="type-badge summative">Summative</span></td>
               <td><span class="td-structure">2 parts · 3 sections · 7 items</span></td>
               <td><span class="td-date">15 Mar 2026</span></td>
@@ -822,7 +939,6 @@
             </tr>
             <tr class="test-row" data-test="14">
               <td><div class="td-title">Data – Tables, Bar Graphs and Line Plots</div></td>
-              <td><span class="td-date">Section 6-1</span></td>
               <td><span class="type-badge interim">Interim</span></td>
               <td><span class="td-structure">1 part · 2 sections · 4 items</span></td>
               <td><span class="td-date">01 Apr 2026</span></td>
@@ -830,7 +946,6 @@
             </tr>
             <tr class="test-row" data-test="15">
               <td><div class="td-title">Number Patterns and Algebraic Thinking</div></td>
-              <td><span class="td-date">Section 6-2</span></td>
               <td><span class="type-badge formative">Formative</span></td>
               <td><span class="td-structure">1 part · 1 section · 3 items</span></td>
               <td><span class="td-date">10 Jan 2026</span></td>
@@ -895,12 +1010,7 @@
           </div>
         </div>
         <div class="panel-body view-mode" id="metadata-body">
-          <div class="grid-2" style="margin-bottom:16px">
-            <div class="field-group">
-              <div class="field-label">Identifier</div>
-              <div class="view-field" id="detail-vf-identifier"></div>
-              <input class="field-input" id="detail-in-identifier" type="text">
-            </div>
+          <div style="margin-bottom:16px">
             <div class="field-group">
               <div class="field-label">Name</div>
               <div class="view-field" id="detail-vf-name"></div>
@@ -996,7 +1106,7 @@
        CREATE TEST
   ═════════════════════════════ -->
   <div class="page" id="page-create-test">
-    <div class="create-page-inner">
+    <div class="create-page-inner" style="max-width:960px">
 
       <div class="back-title" id="create-back-btn" style="margin-bottom:20px">
         <div class="back-title-chevron">
@@ -1005,7 +1115,294 @@
         <span class="back-title-text">New Test</span>
       </div>
 
-      <div class="create-layout">
+      <!-- Progress -->
+      <div class="wz-progress"><div class="wz-progress-fill" id="wz-progress-fill" style="width:25%"></div></div>
+
+      <!-- Step tabs -->
+      <div class="wz-steps">
+        <div class="wz-step active" id="wz-step-tab-1" onclick="wzGoToStep(1)"><span class="wz-step-num">1</span> Name Test</div>
+        <div class="wz-step" id="wz-step-tab-2" onclick="wzGoToStep(2)"><span class="wz-step-num">2</span> Add Sections</div>
+        <div class="wz-step" id="wz-step-tab-3" onclick="wzGoToStep(3)"><span class="wz-step-num">3</span> Pick Items</div>
+        <div class="wz-step" id="wz-step-tab-4" onclick="wzGoToStep(4)"><span class="wz-step-num">4</span> Schedule</div>
+      </div>
+
+      <!-- STEP 1: Name Test -->
+      <div id="wz-step-1">
+        <div class="wz-card">
+          <div class="wz-card-title">Name your test</div>
+          <div class="wz-card-desc">Give this test a clear name, select a course and add access details.</div>
+          <div class="field-group" style="margin-bottom:16px">
+            <div class="field-label">Name <span class="req">*</span></div>
+            <input class="field-input" id="wz-test-name" type="text" placeholder="e.g. Grade 5 Mathematics — Term 2 Assessment" maxlength="80">
+          </div>
+          <div class="grid-2" style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Type</div>
+              <select class="field-input" id="wz-test-type">
+                <option value="formative" selected>Formative</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Course <span class="req">*</span></div>
+              <select class="field-input" id="wz-test-course">
+                <option value="" disabled selected>Select course…</option>
+                <option value="grade1-math">Grade 1 Mathematics</option>
+                <option value="grade1-ela">Grade 1 English Language Arts</option>
+                <option value="grade2-math">Grade 2 Mathematics</option>
+                <option value="grade2-ela">Grade 2 English Language Arts</option>
+                <option value="grade3-math">Grade 3 Mathematics</option>
+                <option value="grade3-ela">Grade 3 English Language Arts</option>
+                <option value="grade4-math">Grade 4 Mathematics</option>
+                <option value="grade4-ela">Grade 4 English Language Arts</option>
+                <option value="grade5-math">Grade 5 Mathematics</option>
+                <option value="grade5-ela">Grade 5 English Language Arts</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Start Date</div>
+              <input class="field-input" id="wz-start-date" type="date">
+            </div>
+            <div class="field-group">
+              <div class="field-label">End Date</div>
+              <input class="field-input" id="wz-end-date" type="date">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="field-group">
+              <div class="field-label">Class Access Code</div>
+              <input class="field-input" id="wz-access-code" type="text" placeholder="e.g. MATH2024">
+            </div>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <button class="btn-ghost" id="wz-btn-cancel">Cancel</button>
+          <div class="wz-nav-right">
+            <button class="btn-primary" onclick="wzGoToStep(2)">Next: Add Sections →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Add Sections -->
+      <div id="wz-step-2" class="wz-hidden">
+        <div class="wz-card">
+          <div class="wz-card-title">Add sections</div>
+          <div class="wz-card-desc">Break your test into topics or parts. Each section will contain its own items. Drag to reorder.</div>
+          <div class="wz-sections-list" id="wz-sections-list"></div>
+          <div class="wz-add-section-row">
+            <input class="field-input" id="wz-new-section-input" type="text" placeholder="Section name (e.g. Algebra)" maxlength="50" onkeydown="if(event.key==='Enter') wzAddSection()">
+            <button class="btn-secondary" onclick="wzAddSection()">+ Add</button>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <button class="btn-ghost" onclick="wzGoToStep(1)">← Back</button>
+          <div class="wz-nav-right">
+            <button class="btn-primary" onclick="wzGoToStep(3)">Next: Pick Items →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Pick Items -->
+      <div id="wz-step-3" class="wz-hidden">
+        <div class="wz-card">
+          <div class="wz-card-title">Pick items</div>
+          <div class="wz-card-desc">Select a section tab, then browse and filter items to add to it. Each item can only be added to one section.</div>
+          <div class="wz-section-tabs" id="wz-section-tabs"></div>
+          <div class="wz-q-layout">
+            <!-- Bank -->
+            <div>
+              <div class="wz-bank-header">
+                <span class="wz-bank-title">Items</span>
+                <span class="wz-badge" id="wz-bank-count">0 items</span>
+              </div>
+              <div class="wz-search-bar">
+                <svg class="wz-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="wz-search-input" placeholder="Search items…" oninput="wzFilterQuestions()">
+              </div>
+              <div class="wz-filter-chips">
+                <span class="wz-chip active" onclick="wzSetFilter(this,'all')">All types</span>
+                <span class="wz-chip" onclick="wzSetFilter(this,'mc')">Multiple Choice</span>
+                <span class="wz-chip" onclick="wzSetFilter(this,'tf')">True / False</span>
+                <span class="wz-chip" onclick="wzSetFilter(this,'sa')">Short Answer</span>
+              </div>
+              <div class="wz-question-list" id="wz-question-list"></div>
+            </div>
+            <!-- Selected -->
+            <div class="wz-selected-panel">
+              <div class="wz-selected-header">
+                <span class="wz-bank-title">Added to Section</span>
+                <span class="wz-badge" id="wz-selected-count">0</span>
+              </div>
+              <div class="wz-selected-list" id="wz-selected-list">
+                <div class="wz-empty-state">
+                  <div class="wz-empty-icon">👈</div>
+                  <div class="wz-empty-text">Click an item to add it<br>to this section</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <button class="btn-ghost" onclick="wzGoToStep(2)">← Back</button>
+          <div class="wz-nav-right">
+            <button class="btn-primary" onclick="wzGoToStep(4)">Schedule →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Schedule -->
+      <div id="wz-step-4" class="wz-hidden">
+        <div class="wz-schedule-layout">
+          <!-- Main column -->
+          <div>
+
+            <!-- Selected Items Review -->
+            <div class="wz-card" style="margin-bottom:16px">
+              <div class="wz-schedule-section-header">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Selected Items
+              </div>
+              <div id="wz-review-sections"></div>
+            </div>
+
+            <!-- When to Deploy -->
+            <div class="wz-card" style="margin-bottom:16px">
+              <div class="wz-schedule-section-header">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                When to Deploy
+              </div>
+              <div class="wz-radio-group">
+                <label class="wz-radio-card wz-radio-selected" id="wz-deploy-now-card">
+                  <input type="radio" name="wz-deploy" value="now" checked onchange="wzUpdateDeployRadio()">
+                  <div class="wz-radio-inner">
+                    <div class="wz-radio-dot"></div>
+                    <div>
+                      <div class="wz-radio-title">Deploy Now</div>
+                      <div class="wz-radio-desc">Students can begin immediately after creation</div>
+                    </div>
+                  </div>
+                </label>
+                <label class="wz-radio-card" id="wz-deploy-later-card">
+                  <input type="radio" name="wz-deploy" value="later" onchange="wzUpdateDeployRadio()">
+                  <div class="wz-radio-inner">
+                    <div class="wz-radio-dot"></div>
+                    <div>
+                      <div class="wz-radio-title">Schedule For Later</div>
+                      <div class="wz-radio-desc">Set a specific date and time for the assessment to open</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <!-- Date/time pickers, shown when Schedule For Later selected -->
+              <div id="wz-schedule-datetime" style="display:none;margin-top:14px">
+                <div class="grid-2">
+                  <div class="field-group">
+                    <div class="field-label">Open Date</div>
+                    <input class="field-input" type="date" id="wz-schedule-date">
+                  </div>
+                  <div class="field-group">
+                    <div class="field-label">Open Time</div>
+                    <input class="field-input" type="time" id="wz-schedule-time">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Assign To -->
+            <div class="wz-card" style="margin-bottom:16px">
+              <div class="wz-schedule-section-header">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Assign To
+              </div>
+              <div class="wz-radio-group">
+                <label class="wz-radio-card wz-radio-selected" id="wz-assign-all-card">
+                  <input type="radio" name="wz-assign" value="all" checked onchange="wzUpdateAssignRadio()">
+                  <div class="wz-radio-inner">
+                    <div class="wz-radio-dot"></div>
+                    <div>
+                      <div class="wz-radio-title">All Students</div>
+                      <div class="wz-radio-desc">Assign to all 24 students in the class</div>
+                    </div>
+                  </div>
+                </label>
+                <label class="wz-radio-card" id="wz-assign-specific-card">
+                  <input type="radio" name="wz-assign" value="specific" onchange="wzUpdateAssignRadio()">
+                  <div class="wz-radio-inner">
+                    <div class="wz-radio-dot"></div>
+                    <div>
+                      <div class="wz-radio-title">Specific Students</div>
+                      <div class="wz-radio-desc">Select individual students to assign this assessment</div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <!-- Student selector, shown when Specific Students selected -->
+              <div id="wz-students-panel" style="display:none;margin-top:14px">
+                <div class="wz-search-bar" style="margin-bottom:8px">
+                  <svg class="wz-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" id="wz-student-search" placeholder="Search students…" oninput="wzFilterStudents()">
+                </div>
+                <div class="wz-student-list" id="wz-student-list"></div>
+                <div class="wz-student-count" id="wz-student-count">0 of 24 students selected</div>
+              </div>
+            </div>
+
+            <!-- Estimated Duration -->
+            <div class="wz-card" style="margin-bottom:16px">
+              <div class="wz-schedule-section-header">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Estimated Duration
+              </div>
+              <input type="range" class="wz-duration-slider" id="wz-duration-slider" min="0" max="5" step="1" value="3" oninput="wzUpdateDuration(this.value)">
+              <div class="wz-duration-presets">
+                <span class="wz-duration-preset" onclick="wzSetDuration(0)">15m</span>
+                <span class="wz-duration-preset" onclick="wzSetDuration(1)">30m</span>
+                <span class="wz-duration-preset" onclick="wzSetDuration(2)">45m</span>
+                <span class="wz-duration-preset wz-duration-active" onclick="wzSetDuration(3)">1h</span>
+                <span class="wz-duration-preset" onclick="wzSetDuration(4)">1.5h</span>
+                <span class="wz-duration-preset" onclick="wzSetDuration(5)">2h</span>
+              </div>
+            </div>
+
+            <!-- Special Instructions -->
+            <div class="wz-card">
+              <div class="wz-schedule-section-header" style="justify-content:space-between">
+                <span style="display:flex;align-items:center;gap:8px">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#75138c" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Special Instructions
+                </span>
+                <span style="font-size:12px;color:#999;font-weight:400">Optional</span>
+              </div>
+              <textarea class="field-input" id="wz-instructions" rows="4" placeholder="e.g. Students may use a calculator. No collaboration permitted. Read all items carefully before answering." style="resize:vertical;margin-top:4px"></textarea>
+            </div>
+          </div>
+
+          <!-- Summary sidebar -->
+          <div class="wz-schedule-sidebar">
+            <div class="wz-sidebar-title">Summary</div>
+            <div class="wz-sidebar-row"><div class="wz-sidebar-label">ASSESSMENT</div><div class="wz-sidebar-value" id="wz-sum-name">—</div></div>
+            <div class="wz-sidebar-row"><div class="wz-sidebar-label">CLASS</div><div class="wz-sidebar-value" id="wz-sum-course">—</div></div>
+            <div class="wz-sidebar-row"><div class="wz-sidebar-label">TYPE</div><div class="wz-sidebar-value" id="wz-sum-type">Formative</div></div>
+            <div class="wz-sidebar-row"><div class="wz-sidebar-label">OPENS</div><div class="wz-sidebar-value" id="wz-sum-opens">Immediately upon creation</div></div>
+            <div class="wz-sidebar-row"><div class="wz-sidebar-label">ASSIGNED TO</div><div class="wz-sidebar-value" id="wz-sum-assigned">All students (24)</div></div>
+            <div class="wz-sidebar-row" style="border:none"><div class="wz-sidebar-label">DURATION</div><div class="wz-sidebar-value" id="wz-sum-duration">1h</div></div>
+          </div>
+        </div>
+
+        <div class="wz-nav">
+          <button class="btn-ghost" onclick="wzGoToStep(3)">← Back</button>
+          <div class="wz-nav-right">
+            <button class="btn-ghost" id="wz-btn-draft">Save as Draft</button>
+            <button class="btn-primary" id="wz-btn-save">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Create Test
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="create-layout" style="display:none">
         <!-- Form card -->
         <div>
           <div class="panel-header" style="border-radius:10px 10px 0 0;border:1px solid #e9e9e9;border-bottom:1px solid #e9e9e9;">
@@ -1015,12 +1412,7 @@
             </div>
           </div>
           <div class="create-card-body">
-            <div class="grid-2" style="margin-bottom:16px">
-              <div class="field-group">
-                <div class="field-label">Identifier <span class="req">*</span> <span class="help-icon">?</span></div>
-                <input class="field-input" type="text" placeholder="e.g., test-math-grade5-2024">
-                <div class="field-hint">Unique ID used in QTI XML</div>
-              </div>
+            <div style="margin-bottom:16px">
               <div class="field-group">
                 <div class="field-label">Name <span class="req">*</span></div>
                 <input class="field-input" type="text" placeholder="e.g., Grade 5 Mathematics Assessment">
@@ -1309,12 +1701,11 @@
   document.querySelectorAll('.test-row').forEach(row => {
     row.addEventListener('click', () => {
       const cells = row.querySelectorAll('td');
-      const name       = cells[0] ? cells[0].querySelector('.td-title')?.textContent.trim() : '';
-      const identifier = cells[1] ? cells[1].textContent.trim() : '';
-      const type       = cells[2] ? cells[2].textContent.trim() : '';
-      const structure  = cells[3] ? cells[3].textContent.trim() : '';
-      const date       = cells[4] ? cells[4].textContent.trim() : '';
-      const status     = cells[5] ? cells[5].textContent.trim() : '';
+      const name      = cells[0] ? cells[0].querySelector('.td-title')?.textContent.trim() : '';
+      const type      = cells[1] ? cells[1].textContent.trim() : '';
+      const structure = cells[2] ? cells[2].textContent.trim() : '';
+      const date      = cells[3] ? cells[3].textContent.trim() : '';
+      const status    = cells[4] ? cells[4].textContent.trim() : '';
 
       // Header title
       document.getElementById('detail-title').textContent = name;
@@ -1325,7 +1716,6 @@
         const inp = document.getElementById(inId);
         if (inp) { if (inp.tagName === 'TEXTAREA') inp.textContent = val; else inp.value = val; }
       };
-      set('detail-vf-identifier',  'detail-in-identifier',  identifier);
       set('detail-vf-name',        'detail-in-name',        name);
       set('detail-vf-type',        'detail-in-type',        type);
       set('detail-vf-status',      'detail-in-status',      status);
@@ -1394,8 +1784,406 @@
 
   // ── Create: back / cancel ──
   document.getElementById('btn-create-cancel').addEventListener('click', () => showPage('test-management'));
-  document.getElementById('create-back-btn').addEventListener('click', () => showPage('test-management'));
+  document.getElementById('create-back-btn').addEventListener('click', () => { wzReset(); showPage('test-management'); });
+
+  // ── Wizard ──────────────────────────────────────────────────────────────────
+  const WZ_COLORS = ['#2a3766','#75138c','#2dbe6c','#ff8c42','#4a6cf7','#00cec9','#fd79a8','#c45000'];
+  const WZ_DURATION_LABELS = ['15m','30m','45m','1h','1.5h','2h'];
+  const WZ_COURSE_LABELS = {
+    'grade1-math':'Grade 1 Mathematics','grade1-ela':'Grade 1 English Language Arts',
+    'grade2-math':'Grade 2 Mathematics','grade2-ela':'Grade 2 English Language Arts',
+    'grade3-math':'Grade 3 Mathematics','grade3-ela':'Grade 3 English Language Arts',
+    'grade4-math':'Grade 4 Mathematics','grade4-ela':'Grade 4 English Language Arts',
+    'grade5-math':'Grade 5 Mathematics','grade5-ela':'Grade 5 English Language Arts',
+  };
+
+  const WZ_QUESTIONS = [
+    { id:1,  text:"What is 3x + 5 = 14? Solve for x.", type:"sa" },
+    { id:2,  text:"Simplify: 2(x + 3) − x", type:"sa" },
+    { id:3,  text:"Which of these is a linear equation? (A) x² = 9  (B) 2x + 1 = 7  (C) x³ = 27  (D) √x = 4", type:"mc" },
+    { id:4,  text:"True or False: x + x = x²", type:"tf" },
+    { id:5,  text:"Expand and simplify: (x + 2)(x − 3)", type:"sa" },
+    { id:6,  text:"Solve: 2x + y = 10 and x − y = 2", type:"sa" },
+    { id:7,  text:"What is the slope of y = 4x − 7?", type:"mc" },
+    { id:8,  text:"What fraction is equivalent to 0.75?", type:"mc" },
+    { id:9,  text:"Calculate: ¾ + ⅝", type:"sa" },
+    { id:10, text:"True or False: ½ × ½ = ¼", type:"tf" },
+    { id:11, text:"Convert 2⅓ to an improper fraction.", type:"sa" },
+    { id:12, text:"Which is larger: ⅗ or ⅔?", type:"mc" },
+    { id:13, text:"Calculate: 1¾ ÷ ½", type:"sa" },
+    { id:14, text:"What is the area of a triangle with base 8 cm and height 5 cm?", type:"sa" },
+    { id:15, text:"True or False: All squares are rectangles.", type:"tf" },
+    { id:16, text:"A circle has radius 7 cm. What is its circumference? (π ≈ 3.14)", type:"sa" },
+    { id:17, text:"What is 15% of 200?", type:"sa" },
+    { id:18, text:"A shirt costs $40, discounted by 25%. What is the sale price?", type:"mc" },
+    { id:19, text:"True or False: 110% of 50 is greater than 50.", type:"tf" },
+    { id:20, text:"Calculate the mean of: 4, 8, 15, 16, 23, 42", type:"sa" },
+  ];
+
+  const wz = {
+    step:1, testName:'', testType:'formative', course:'', startDate:'', endDate:'', accessCode:'',
+    sections:[], selections:{}, activeSection:null, activeFilter:'all',
+    deployNow:true, assignAll:true, duration:3
+  };
+
+  // ── All items assigned globally (across all sections) ──
+  function wzAllAssigned() {
+    const assigned = new Set();
+    Object.values(wz.selections).forEach(ids => ids.forEach(id => assigned.add(id)));
+    return assigned;
+  }
+
+  function wzReset() {
+    Object.assign(wz, { step:1, testName:'', testType:'formative', course:'', startDate:'', endDate:'', accessCode:'',
+      sections:[], selections:{}, activeSection:null, activeFilter:'all', deployNow:true, assignAll:true, duration:3 });
+    ['wz-test-name','wz-access-code','wz-start-date','wz-end-date'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('wz-test-course').value = '';
+    document.getElementById('wz-new-section-input').value = '';
+    document.getElementById('wz-search-input').value = '';
+    document.querySelectorAll('.wz-chip').forEach((c,i) => c.classList.toggle('active', i === 0));
+    wzRenderSections();
+    [1,2,3,4].forEach(i => {
+      document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== 1);
+      const tab = document.getElementById('wz-step-tab-'+i);
+      tab.classList.remove('active','done');
+      if (i === 1) tab.classList.add('active');
+    });
+    document.getElementById('wz-progress-fill').style.width = '25%';
+  }
+
+  function wzGoToStep(n) {
+    // Validate forward navigation; allow backward freely
+    if (n > wz.step) {
+      if (n > 1) {
+        const name = document.getElementById('wz-test-name').value.trim();
+        if (!name) { wzShowToast('Please enter a test name first'); return; }
+        wz.testName = name;
+        wz.course = document.getElementById('wz-test-course').value;
+        wz.startDate = document.getElementById('wz-start-date').value;
+        wz.endDate = document.getElementById('wz-end-date').value;
+        wz.accessCode = document.getElementById('wz-access-code').value.trim();
+      }
+      if (n > 2 && wz.sections.length === 0) { wzShowToast('Add at least one section first'); return; }
+    } else {
+      // Going backward: save current step data
+      if (wz.step === 1) {
+        wz.testName = document.getElementById('wz-test-name').value.trim();
+        wz.course = document.getElementById('wz-test-course').value;
+      }
+    }
+    wz.step = n;
+    [1,2,3,4].forEach(i => {
+      document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== n);
+      const tab = document.getElementById('wz-step-tab-'+i);
+      tab.classList.remove('active','done');
+      if (i === n) tab.classList.add('active');
+      else if (i < n) tab.classList.add('done');
+    });
+    document.getElementById('wz-progress-fill').style.width = (n * 25) + '%';
+    if (n === 3) wzRenderStep3();
+    if (n === 4) wzRenderScheduleSummary();
+  }
+
+  // ── Step 2: Sections with drag-and-drop ──
+  let wzDragSrcIdx = null, wzDragTargetIdx = null;
+
+  function wzAddSection() {
+    const input = document.getElementById('wz-new-section-input');
+    const name = input.value.trim(); if (!name) return;
+    const id = Date.now();
+    wz.sections.push({ id, name, color: WZ_COLORS[wz.sections.length % WZ_COLORS.length] });
+    wz.selections[id] = [];
+    input.value = '';
+    wzRenderSections();
+    input.focus();
+  }
+
+  function wzRemoveSection(id) {
+    wz.sections = wz.sections.filter(s => s.id !== id);
+    delete wz.selections[id];
+    wzRenderSections();
+  }
+
+  function wzRenderSections() {
+    const list = document.getElementById('wz-sections-list');
+    list.innerHTML = wz.sections.map((s, i) => `
+      <div class="wz-section-item" draggable="true" data-idx="${i}"
+        ondragstart="wzDragStart(event,${i})" ondragover="wzDragOver(event,${i})"
+        ondrop="wzDrop(event,${i})" ondragleave="wzDragLeave(event)" ondragend="wzDragEnd(event)">
+        <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
+        <span class="wz-section-color" style="background:${s.color}"></span>
+        <input type="text" value="${wzEsc(s.name)}" onchange="wz.sections[${i}].name=this.value" placeholder="Section name">
+        <span class="wz-section-count">${(wz.selections[s.id]||[]).length} items</span>
+        <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${s.id})">✕</button>
+      </div>`).join('');
+  }
+
+  function wzDragStart(e, idx) {
+    wzDragSrcIdx = idx;
+    wzDragTargetIdx = idx;
+    e.dataTransfer.effectAllowed = 'move';
+    // Delay adding class so ghost image renders first
+    requestAnimationFrame(() => e.currentTarget.classList.add('wz-dragging'));
+  }
+  function wzDragOver(e, idx) {
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    if (wzDragTargetIdx === idx) return;
+    wzDragTargetIdx = idx;
+    wzApplyDragTransforms();
+  }
+  function wzApplyDragTransforms() {
+    const items = document.querySelectorAll('.wz-section-item');
+    const src = wzDragSrcIdx, tgt = wzDragTargetIdx;
+    items.forEach((el, i) => {
+      if (i === src) { el.style.transform = ''; return; }
+      const h = el.offsetHeight + 8; // height + gap
+      let shift = 0;
+      if (src < tgt && i > src && i <= tgt) shift = -h;
+      else if (src > tgt && i >= tgt && i < src) shift = h;
+      el.style.transform = shift ? `translateY(${shift}px)` : '';
+    });
+  }
+  function wzDragLeave(e) { /* no-op: transforms handle visual feedback */ }
+  function wzDragEnd(e) {
+    document.querySelectorAll('.wz-section-item').forEach(el => {
+      el.classList.remove('wz-dragging');
+      el.style.transform = '';
+    });
+    wzDragSrcIdx = null; wzDragTargetIdx = null;
+  }
+  function wzDrop(e, idx) {
+    e.preventDefault();
+    const src = wzDragSrcIdx;
+    // Clear transforms immediately before re-render
+    document.querySelectorAll('.wz-section-item').forEach(el => { el.style.transform = ''; el.classList.remove('wz-dragging'); });
+    wzDragSrcIdx = null; wzDragTargetIdx = null;
+    if (src === null || src === idx) return;
+    const moved = wz.sections.splice(src, 1)[0];
+    wz.sections.splice(idx, 0, moved);
+    wzRenderSections();
+  }
+
+  // ── Step 3: Items ──
+  function wzRenderStep3() {
+    if (!wz.activeSection || !wz.sections.find(s => s.id === wz.activeSection))
+      wz.activeSection = wz.sections[0]?.id || null;
+    wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected();
+  }
+
+  function wzRenderSectionTabs() {
+    document.getElementById('wz-section-tabs').innerHTML = wz.sections.map(s => `
+      <div class="wz-section-tab ${s.id === wz.activeSection ? 'active' : ''}" onclick="wzSwitchSection(${s.id})">
+        <span class="wz-tab-dot" style="background:${s.color}"></span>
+        ${wzEsc(s.name)}<span class="wz-tab-count">${(wz.selections[s.id]||[]).length}</span>
+      </div>`).join('');
+  }
+
+  function wzSwitchSection(id) { wz.activeSection = id; wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected(); }
+
+  function wzSetFilter(el, filter) {
+    wz.activeFilter = filter;
+    document.querySelectorAll('.wz-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    wzFilterQuestions();
+  }
+
+  function wzFilterQuestions() {
+    const search = (document.getElementById('wz-search-input').value || '').toLowerCase();
+    const filter = wz.activeFilter;
+    // Items in the active section are shown as selected; items in OTHER sections are hidden
+    const activeSel = new Set(wz.selections[wz.activeSection] || []);
+    const allAssigned = wzAllAssigned();
+
+    const filtered = WZ_QUESTIONS.filter(q => {
+      // Hide items assigned to a different section
+      if (allAssigned.has(q.id) && !activeSel.has(q.id)) return false;
+      const matchSearch = !search || q.text.toLowerCase().includes(search);
+      const matchType = filter === 'all' || filter === q.type;
+      return matchSearch && matchType;
+    });
+
+    document.getElementById('wz-bank-count').textContent = filtered.length + ' items';
+    const typeLabels = { mc:'Multiple Choice', tf:'True / False', sa:'Short Answer' };
+    const list = document.getElementById('wz-question-list');
+    if (!filtered.length) {
+      list.innerHTML = `<div class="wz-empty-state"><div class="wz-empty-icon">🔍</div><div class="wz-empty-text">No items match your filter</div></div>`;
+      return;
+    }
+    list.innerHTML = filtered.map(q => {
+      const sel = activeSel.has(q.id);
+      return `<div class="wz-q-item ${sel?'selected':''}" onclick="wzAddQuestion(${q.id})">
+        <span class="wz-q-add-icon">${sel?'✓':'+'}</span>
+        <div><div class="wz-q-text">${wzEsc(q.text)}</div>
+        <div class="wz-q-meta"><span class="wz-q-tag wz-tag-${q.type}">${typeLabels[q.type]}</span></div>
+        </div></div>`;
+    }).join('');
+  }
+
+  function wzAddQuestion(qId) {
+    if (!wz.activeSection) return;
+    const sel = wz.selections[wz.activeSection];
+    if (!sel.includes(qId)) { sel.push(qId); wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected(); }
+  }
+
+  function wzRemoveQuestion(qId) {
+    if (!wz.activeSection) return;
+    wz.selections[wz.activeSection] = wz.selections[wz.activeSection].filter(id => id !== qId);
+    wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected();
+  }
+
+  function wzRenderSelected() {
+    const sel = wz.selections[wz.activeSection] || [];
+    document.getElementById('wz-selected-count').textContent = sel.length;
+    const list = document.getElementById('wz-selected-list');
+    if (!sel.length) {
+      list.innerHTML = `<div class="wz-empty-state"><div class="wz-empty-icon">👈</div><div class="wz-empty-text">Click an item to add it<br>to this section</div></div>`;
+      return;
+    }
+    list.innerHTML = sel.map((qId, i) => {
+      const q = WZ_QUESTIONS.find(x => x.id === qId); if (!q) return '';
+      const txt = q.text.length > 80 ? q.text.slice(0,80)+'…' : q.text;
+      return `<div class="wz-sel-item">
+        <span class="wz-sel-num">${i+1}</span>
+        <div class="wz-sel-text">${wzEsc(txt)}</div>
+        <button class="btn-ghost" style="padding:3px 7px;font-size:11px;border-radius:4px;flex-shrink:0" onclick="wzRemoveQuestion(${qId})">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Step 4: Schedule ──
+  const WZ_STUDENTS = [
+    'Alice Johnson','Bob Smith','Charlie Brown','Diana Prince','Edward Miller',
+    'Fiona Green','George White','Hannah Lee','Ian Davis','Julia Clark',
+    'Kevin Martinez','Laura Thompson','Michael Wilson','Nancy Moore','Oscar Taylor',
+    'Patricia Anderson','Quinn Jackson','Rachel Harris','Sam Williams','Tina Martin',
+    'Uma Walker','Victor Hall','Wendy Allen','Xavier Young'
+  ];
+  let wzSelectedStudents = new Set();
+
+  function wzUpdateDuration(val) {
+    wz.duration = parseInt(val);
+    document.querySelectorAll('.wz-duration-preset').forEach((el,i) => el.classList.toggle('wz-duration-active', i === wz.duration));
+    document.getElementById('wz-sum-duration').textContent = WZ_DURATION_LABELS[wz.duration];
+  }
+
+  function wzSetDuration(val) {
+    wz.duration = val;
+    document.getElementById('wz-duration-slider').value = val;
+    wzUpdateDuration(val);
+  }
+
+  function wzUpdateDeployRadio() {
+    const now = document.querySelector('input[name="wz-deploy"]:checked').value === 'now';
+    wz.deployNow = now;
+    document.getElementById('wz-deploy-now-card').classList.toggle('wz-radio-selected', now);
+    document.getElementById('wz-deploy-later-card').classList.toggle('wz-radio-selected', !now);
+    document.getElementById('wz-schedule-datetime').style.display = now ? 'none' : 'block';
+    document.getElementById('wz-sum-opens').textContent = now ? 'Immediately upon creation' : 'Scheduled for later';
+  }
+
+  function wzUpdateAssignRadio() {
+    const all = document.querySelector('input[name="wz-assign"]:checked').value === 'all';
+    wz.assignAll = all;
+    document.getElementById('wz-assign-all-card').classList.toggle('wz-radio-selected', all);
+    document.getElementById('wz-assign-specific-card').classList.toggle('wz-radio-selected', !all);
+    document.getElementById('wz-students-panel').style.display = all ? 'none' : 'block';
+    if (!all) { wzFilterStudents(); }
+    document.getElementById('wz-sum-assigned').textContent = all ? 'All students (24)' : wzSelectedStudentsLabel();
+  }
+
+  function wzSelectedStudentsLabel() {
+    const n = wzSelectedStudents.size;
+    return n === 0 ? 'No students selected' : `${n} student${n!==1?'s':''} selected`;
+  }
+
+  function wzFilterStudents() {
+    const search = (document.getElementById('wz-student-search').value || '').toLowerCase();
+    const filtered = WZ_STUDENTS.filter(s => !search || s.toLowerCase().includes(search));
+    const list = document.getElementById('wz-student-list');
+    list.innerHTML = filtered.map(s => {
+      const sel = wzSelectedStudents.has(s);
+      return `<div class="wz-student-item ${sel?'selected':''}" onclick="wzToggleStudent('${wzEsc(s)}')">
+        <div class="wz-student-cb">${sel?'✓':''}</div>
+        <span>${wzEsc(s)}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('wz-student-count').textContent = `${wzSelectedStudents.size} of 24 students selected`;
+  }
+
+  function wzToggleStudent(name) {
+    if (wzSelectedStudents.has(name)) wzSelectedStudents.delete(name);
+    else wzSelectedStudents.add(name);
+    wzFilterStudents();
+    document.getElementById('wz-sum-assigned').textContent = wzSelectedStudentsLabel();
+  }
+
+  function wzRenderReviewItems() {
+    const totalItems = Object.values(wz.selections).reduce((a,b) => a+b.length, 0);
+    const typeLabels = { mc:'MC', tf:'T/F', sa:'SA' };
+    let html = '';
+    if (totalItems === 0) {
+      html = `<div style="font-size:12px;color:#bbb;padding:4px 0">No items selected yet</div>`;
+    } else {
+      wz.sections.forEach(s => {
+        const qIds = wz.selections[s.id] || [];
+        if (!qIds.length) return;
+        html += `<div class="wz-review-section">
+          <div class="wz-review-section-header">
+            <span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block;flex-shrink:0"></span>
+            ${wzEsc(s.name)} <span style="font-weight:400;color:#999">(${qIds.length} item${qIds.length!==1?'s':''})</span>
+          </div>
+          ${qIds.map((qId,i) => {
+            const q = WZ_QUESTIONS.find(x=>x.id===qId); if(!q) return '';
+            const txt = q.text.length>90 ? q.text.slice(0,90)+'…' : q.text;
+            return `<div class="wz-review-item"><span class="wz-review-item-num">${i+1}.</span><span>${wzEsc(txt)}</span></div>`;
+          }).join('')}
+        </div>`;
+      });
+    }
+    document.getElementById('wz-review-sections').innerHTML = html;
+  }
+
+  function wzRenderScheduleSummary() {
+    const courseLabel = WZ_COURSE_LABELS[wz.course] || wz.course || '—';
+    document.getElementById('wz-sum-name').textContent = wz.testName || '—';
+    document.getElementById('wz-sum-course').textContent = courseLabel;
+    document.getElementById('wz-sum-type').textContent = 'Formative';
+    document.getElementById('wz-sum-opens').textContent = wz.deployNow ? 'Immediately upon creation' : 'Scheduled for later';
+    document.getElementById('wz-sum-assigned').textContent = wz.assignAll ? 'All students (24)' : wzSelectedStudentsLabel();
+    document.getElementById('wz-sum-duration').textContent = WZ_DURATION_LABELS[wz.duration];
+    wzRenderReviewItems();
+    // Reset radio state visually to match wz state
+    document.querySelector('input[name="wz-deploy"][value="'+(wz.deployNow?'now':'later')+'"]').checked = true;
+    document.getElementById('wz-deploy-now-card').classList.toggle('wz-radio-selected', wz.deployNow);
+    document.getElementById('wz-deploy-later-card').classList.toggle('wz-radio-selected', !wz.deployNow);
+    document.getElementById('wz-schedule-datetime').style.display = wz.deployNow ? 'none' : 'block';
+    document.querySelector('input[name="wz-assign"][value="'+(wz.assignAll?'all':'specific')+'"]').checked = true;
+    document.getElementById('wz-assign-all-card').classList.toggle('wz-radio-selected', wz.assignAll);
+    document.getElementById('wz-assign-specific-card').classList.toggle('wz-radio-selected', !wz.assignAll);
+    document.getElementById('wz-students-panel').style.display = wz.assignAll ? 'none' : 'block';
+  }
+
+  function wzEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  let wzToastTimer;
+  function wzShowToast(msg) {
+    const t = document.getElementById('wz-toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(wzToastTimer);
+    wzToastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  document.getElementById('wz-btn-cancel').addEventListener('click', () => { wzReset(); showPage('test-management'); });
+  document.getElementById('wz-btn-draft').addEventListener('click', () => {
+    wzShowToast('Draft saved');
+    setTimeout(() => { wzReset(); showPage('test-management'); }, 1500);
+  });
+  document.getElementById('wz-btn-save').addEventListener('click', () => {
+    wzShowToast('✓ Assessment created successfully!');
+    setTimeout(() => { wzReset(); showPage('test-management'); }, 1500);
+  });
 </script>
 
+<div class="wz-toast" id="wz-toast"></div>
 </body>
 </html>
