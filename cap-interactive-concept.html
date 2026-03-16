@@ -668,6 +668,18 @@
     .wz-drag-handle:active { cursor: grabbing; }
     .wz-section-item { transition: transform 0.18s ease; }
     .wz-section-item.wz-dragging { opacity: 0.25; cursor: grabbing; border-radius: 10px; }
+    /* Sub-sections */
+    .wz-section-sub { margin-left: 28px; background: #fff; }
+    .wz-sub-dropzone {
+      display: none; margin-left: 28px; margin-top: 4px; margin-bottom: 4px;
+      height: 32px; border: 1.5px dashed #d0d5e8; border-radius: 7px;
+      align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; color: #bbb; gap: 6px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s; cursor: default;
+    }
+    .wz-sections-list.wz-drag-active .wz-sub-dropzone { display: flex; }
+    .wz-sections-list.wz-drag-active .wz-sub-dropzone.wz-drag-src-zone { display: none; }
+    .wz-sub-dropzone.wz-nest-over { border-color: #2a3766; background: #eef0f8; color: #2a3766; }
     /* Student picker */
     .wz-student-list { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
     .wz-student-list::-webkit-scrollbar { width: 3px; }
@@ -1930,7 +1942,7 @@
   }
 
   // ── Step 2: Sections with drag-and-drop ──
-  let wzDragSrcIdx = null, wzDragTargetIdx = null;
+  let wzDragSrcId = null, wzDragTargetId = null, wzDropHandled = false;
 
   function wzAddSection() {
     const input = document.getElementById('wz-new-section-input');
@@ -1944,67 +1956,147 @@
   }
 
   function wzRemoveSection(id) {
-    wz.sections = wz.sections.filter(s => s.id !== id);
+    // Also remove any sub-sections belonging to this section
+    wz.sections.filter(s => s.parentId === id).forEach(c => delete wz.selections[c.id]);
+    wz.sections = wz.sections.filter(s => s.id !== id && s.parentId !== id);
     delete wz.selections[id];
     wzRenderSections();
   }
 
   function wzRenderSections() {
     const list = document.getElementById('wz-sections-list');
-    list.innerHTML = wz.sections.map((s, i) => `
-      <div class="wz-section-item" draggable="true" data-idx="${i}"
-        ondragstart="wzDragStart(event,${i})" ondragover="wzDragOver(event,${i})"
-        ondrop="wzDrop(event,${i})" ondragleave="wzDragLeave(event)" ondragend="wzDragEnd(event)">
-        <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
-        <span class="wz-section-color" style="background:${s.color}"></span>
-        <input type="text" value="${wzEsc(s.name)}" onchange="wz.sections[${i}].name=this.value" placeholder="Section name">
-        <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${s.id})">✕</button>
-      </div>`).join('');
+    const topLevel = wz.sections.filter(s => !s.parentId);
+    list.innerHTML = topLevel.map(s => {
+      const subs = wz.sections.filter(x => x.parentId === s.id);
+      const topIdx = wz.sections.indexOf(s);
+      return `
+        <div class="wz-section-item" draggable="true" data-id="${s.id}"
+          ondragstart="wzDragStart(event,${s.id})" ondragover="wzDragOver(event,${s.id})"
+          ondrop="wzDrop(event,${s.id})" ondragleave="wzDragLeave(event)" ondragend="wzDragEnd(event)">
+          <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
+          <span class="wz-section-color" style="background:${s.color}"></span>
+          <input type="text" value="${wzEsc(s.name)}" onchange="wz.sections[${topIdx}].name=this.value" placeholder="Section name">
+          <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${s.id})">✕</button>
+        </div>
+        ${subs.map(sub => {
+          const subIdx = wz.sections.indexOf(sub);
+          return `
+            <div class="wz-section-item wz-section-sub" draggable="true" data-id="${sub.id}" data-parent-id="${sub.parentId}"
+              ondragstart="wzDragStart(event,${sub.id})" ondragover="wzDragOver(event,${sub.id})"
+              ondrop="wzDrop(event,${sub.id})" ondragleave="wzDragLeave(event)" ondragend="wzDragEnd(event)">
+              <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-right:-4px"><polyline points="9 18 15 12 9 6"/></svg>
+              <span style="width:8px;height:8px;border-radius:50%;background:${sub.color};flex-shrink:0"></span>
+              <input type="text" value="${wzEsc(sub.name)}" onchange="wz.sections[${subIdx}].name=this.value" placeholder="Sub-section name">
+              <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${sub.id})">✕</button>
+            </div>`;
+        }).join('')}
+        <div class="wz-sub-dropzone" data-parent-id="${s.id}"
+          ondragover="wzSubDropZoneOver(event,${s.id})" ondragleave="wzSubDropZoneLeave(event,${s.id})"
+          ondrop="wzSubDrop(event,${s.id})">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Drop here to nest as sub-section
+        </div>`;
+    }).join('');
   }
 
-  function wzDragStart(e, idx) {
-    wzDragSrcIdx = idx;
-    wzDragTargetIdx = idx;
+  function wzDragStart(e, id) {
+    wzDragSrcId = id;
+    wzDragTargetId = id;
+    wzDropHandled = false;
     e.dataTransfer.effectAllowed = 'move';
-    // Delay adding class so ghost image renders first
-    requestAnimationFrame(() => e.currentTarget.classList.add('wz-dragging'));
+    requestAnimationFrame(() => {
+      e.currentTarget.classList.add('wz-dragging');
+      document.getElementById('wz-sections-list').classList.add('wz-drag-active');
+      // Hide this section's own drop zone so it can't nest into itself
+      const srcZone = document.querySelector(`.wz-sub-dropzone[data-parent-id="${id}"]`);
+      if (srcZone) srcZone.classList.add('wz-drag-src-zone');
+    });
   }
-  function wzDragOver(e, idx) {
+  function wzDragOver(e, id) {
+    const src = wz.sections.find(s => s.id === wzDragSrcId);
+    const tgt = wz.sections.find(s => s.id === id);
+    if (!src || !tgt) return;
+    // Only allow reorder within the same level (both top-level, or same parent)
+    if (src.parentId !== tgt.parentId) return;
     e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-    if (wzDragTargetIdx === idx) return;
-    wzDragTargetIdx = idx;
+    if (wzDragTargetId === id) return;
+    wzDragTargetId = id;
     wzApplyDragTransforms();
   }
   function wzApplyDragTransforms() {
-    const items = document.querySelectorAll('.wz-section-item');
-    const src = wzDragSrcIdx, tgt = wzDragTargetIdx;
+    const srcSection = wz.sections.find(s => s.id === wzDragSrcId);
+    const tgtSection = wz.sections.find(s => s.id === wzDragTargetId);
+    if (!srcSection || !tgtSection) return;
+    const isTopLevel = !srcSection.parentId;
+    const levelSections = isTopLevel
+      ? wz.sections.filter(s => !s.parentId)
+      : wz.sections.filter(s => s.parentId === srcSection.parentId);
+    const items = isTopLevel
+      ? [...document.querySelectorAll('.wz-section-item:not(.wz-section-sub)')]
+      : [...document.querySelectorAll(`.wz-section-item.wz-section-sub[data-parent-id="${srcSection.parentId}"]`)];
+    const src = levelSections.findIndex(s => s.id === wzDragSrcId);
+    const tgt = levelSections.findIndex(s => s.id === wzDragTargetId);
     items.forEach((el, i) => {
       if (i === src) { el.style.transform = ''; return; }
-      const h = el.offsetHeight + 8; // height + gap
+      const h = el.offsetHeight + 8;
       let shift = 0;
       if (src < tgt && i > src && i <= tgt) shift = -h;
       else if (src > tgt && i >= tgt && i < src) shift = h;
       el.style.transform = shift ? `translateY(${shift}px)` : '';
     });
   }
-  function wzDragLeave(e) { /* no-op: transforms handle visual feedback */ }
+  function wzDragLeave(e) { /* no-op */ }
   function wzDragEnd(e) {
-    const src = wzDragSrcIdx;
-    const tgt = wzDragTargetIdx;
+    const srcId = wzDragSrcId;
+    const tgtId = wzDragTargetId;
+    const handled = wzDropHandled;
     document.querySelectorAll('.wz-section-item').forEach(el => {
       el.classList.remove('wz-dragging');
       el.style.transform = '';
     });
-    wzDragSrcIdx = null; wzDragTargetIdx = null;
-    if (src !== null && tgt !== null && src !== tgt) {
-      const moved = wz.sections.splice(src, 1)[0];
-      wz.sections.splice(tgt, 0, moved);
-      wzRenderSections();
+    document.getElementById('wz-sections-list').classList.remove('wz-drag-active');
+    document.querySelectorAll('.wz-sub-dropzone').forEach(z => z.classList.remove('wz-drag-src-zone','wz-nest-over'));
+    wzDragSrcId = null; wzDragTargetId = null; wzDropHandled = false;
+    if (handled) { wzRenderSections(); return; }
+    if (srcId !== null && tgtId !== null && srcId !== tgtId) {
+      const srcSection = wz.sections.find(s => s.id === srcId);
+      const tgtSection = wz.sections.find(s => s.id === tgtId);
+      if (srcSection && tgtSection && srcSection.parentId === tgtSection.parentId) {
+        const srcIdx = wz.sections.indexOf(srcSection);
+        const tgtIdx = wz.sections.indexOf(tgtSection);
+        const moved = wz.sections.splice(srcIdx, 1)[0];
+        wz.sections.splice(tgtIdx, 0, moved);
+        wzRenderSections();
+      }
     }
   }
-  function wzDrop(e, idx) {
+  function wzDrop(e, id) {
     e.preventDefault();
-    wzDragTargetIdx = idx;
+    wzDragTargetId = id;
+  }
+  function wzSubDropZoneOver(e, parentId) {
+    const srcSection = wz.sections.find(s => s.id === wzDragSrcId);
+    // Only top-level sections can be nested; sub-sections cannot nest further
+    if (!srcSection || srcSection.parentId || wzDragSrcId === parentId) return;
+    const parentSection = wz.sections.find(s => s.id === parentId);
+    if (!parentSection || parentSection.parentId) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    // Clear reorder transforms when hovering nest zone
+    document.querySelectorAll('.wz-section-item').forEach(el => el.style.transform = '');
+    document.querySelector(`.wz-sub-dropzone[data-parent-id="${parentId}"]`)?.classList.add('wz-nest-over');
+  }
+  function wzSubDropZoneLeave(e, parentId) {
+    document.querySelector(`.wz-sub-dropzone[data-parent-id="${parentId}"]`)?.classList.remove('wz-nest-over');
+  }
+  function wzSubDrop(e, parentId) {
+    e.preventDefault();
+    const srcSection = wz.sections.find(s => s.id === wzDragSrcId);
+    if (!srcSection || srcSection.parentId || wzDragSrcId === parentId) return;
+    const parentSection = wz.sections.find(s => s.id === parentId);
+    if (!parentSection || parentSection.parentId) return;
+    srcSection.parentId = parentId;
+    wzDropHandled = true;
   }
 
   // ── Step 3: Items ──
