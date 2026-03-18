@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognia – Test Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #f7f8fa;
+      color: #1a1a2e;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: 240px;
+      background: #fff;
+      border-right: 1px solid #e9e9e9;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding-top: 20px;
+    }
+    .sidebar-logo { padding: 0 20px 24px; }
+    .sidebar-logo svg { display: block; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .nav-item:hover { background: #f0f2f8; }
+    .nav-item.active { background: #eef0f8; color: #2a3766; font-weight: 600; }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: #2a3766;
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item svg { flex-shrink: 0; }
+    .nav-chevron { margin-left: auto; flex-shrink: 0; }
+
+    /* ─── Main ─── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e9e9e9;
+      height: 52px;
+      display: flex; align-items: center;
+      padding: 0 24px; gap: 16px;
+      flex-shrink: 0;
+    }
+    .topbar-left { display: flex; align-items: center; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+
+    .icon-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; cursor: pointer; color: #777;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: #f0f2f8; }
+
+    .avatar {
+      width: 32px; height: 32px;
+      border-radius: 9999px; background: #2a3766; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .user-label {
+      font-size: 13px; font-weight: 500; color: #1a1a2e;
+      display: flex; align-items: center; gap: 4px; cursor: pointer;
+    }
+
+    /* ─── Pages ─── */
+    .page { display: none; flex: 1; overflow-y: auto; padding: 28px 32px; opacity: 0; }
+    .page.active { display: block; animation: fadeIn 0.15s ease forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ─── Dashboard ─── */
+    .page-title { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .page-subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: #fff; border-radius: 10px; padding: 20px; }
+    .stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .stat-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .stat-icon.blue   { background: #eef2ff; color: #4a6cf7; }
+    .stat-icon.green  { background: #edfaf3; color: #2dbe6c; }
+    .stat-icon.purple { background: #f3eeff; color: #9c5cf7; }
+    .stat-icon.orange { background: #fff4ee; color: #ff8c42; }
+    .stat-badge { font-size: 12px; font-weight: 600; color: #2dbe6c; }
+    .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #1a1a2e; }
+    .section-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 14px; }
+    .actions-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 28px; }
+    .action-card { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; padding: 24px 20px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s; }
+    .action-card:hover { box-shadow: 0 4px 16px rgba(42,55,102,0.08); border-color: #d0d5e8; }
+    .action-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .action-icon.blue   { background: #eef2ff; color: #4a6cf7; }
+    .action-icon.green  { background: #edfaf3; color: #2dbe6c; }
+    .action-icon.purple { background: #f3eeff; color: #9c5cf7; }
+    .action-name { font-size: 14px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; }
+    .action-desc { font-size: 12px; color: #888; }
+    .activity-list { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .activity-item { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #f0f0f0; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 36px; height: 36px; border-radius: 8px; background: #f4f5f8; color: #777; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .activity-info { flex: 1; }
+    .activity-name { font-size: 13px; font-weight: 600; color: #1a1a2e; margin-bottom: 2px; }
+    .activity-sub { font-size: 12px; color: #888; }
+    .activity-time { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+    /* ─── Shared components ─── */
+
+    /* Max-width container */
+    .constrained {
+      max-width: 1320px;
+      width: 100%;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; margin-bottom: 18px; }
+    .bc-link { color: #2a3766; font-weight: 600; cursor: pointer; }
+    .bc-link:hover { text-decoration: underline; }
+    .bc-sep { color: #ccc; font-size: 13px; }
+    .bc-current { color: #555; }
+
+    /* Chevron back title */
+    .back-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #1a1a2e;
+    }
+    .back-title-chevron {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      color: #555;
+      flex-shrink: 0;
+      transition: color 0.13s;
+    }
+    .back-title:hover .back-title-chevron { color: #2a3766; }
+
+    /* Table toolbar */
+    .table-toolbar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-bottom: 1px solid #e9e9e9;
+    }
+    .search-wrap {
+      position: relative; flex: 1; max-width: 320px;
+    }
+    .search-wrap svg {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: #aaa; pointer-events: none;
+    }
+    .search-input {
+      width: 100%; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 7px 10px 7px 32px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; color: #1a1a2e;
+      background: #fff; outline: none;
+      transition: border-color 0.13s, box-shadow 0.13s;
+    }
+    .search-input:focus { border-color: #2a3766; box-shadow: 0 0 0 3px rgba(42,55,102,0.09); }
+    .search-input::placeholder { color: #bbb; }
+
+    /* Column header with sort / filter */
+    th { position: relative; }
+    .th-cell {
+      display: flex; align-items: center; gap: 4px; white-space: nowrap;
+    }
+    .th-inner {
+      display: inline-flex; align-items: center; gap: 5px; cursor: pointer; user-select: none;
+    }
+    .th-inner:hover { color: #2a3766; }
+    .sort-icon { color: #ccc; flex-shrink: 0; transition: color 0.12s; }
+    .th-inner:hover .sort-icon, .th-inner.asc .sort-icon, .th-inner.desc .sort-icon { color: #2a3766; }
+
+    .filter-btn {
+      position: relative;
+      background: none; border: none; padding: 2px; cursor: pointer;
+      color: #ccc; display: inline-flex; align-items: center; border-radius: 4px;
+      transition: color 0.12s, background 0.12s; flex-shrink: 0;
+    }
+    .filter-btn:hover { color: #555; background: #eef0f8; }
+    .filter-btn.active { color: #2a3766; }
+    .filter-btn.active::after {
+      content: ''; position: absolute; top: 1px; right: 1px;
+      width: 5px; height: 5px; border-radius: 50%; background: #4a6cf7;
+    }
+
+    /* Filter dropdown */
+    .filter-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0; z-index: 200;
+      background: #fff; border: 1px solid #d0d5e8; border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12); min-width: 172px;
+      padding: 4px 0; display: none;
+    }
+    .filter-dropdown.open { display: block; animation: fadeIn 0.1s ease forwards; }
+    .filter-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px 6px; font-size: 11px; font-weight: 700;
+      color: #aaa; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .filter-select-all {
+      font-size: 11px; font-weight: 600; color: #2a3766; cursor: pointer; text-transform: none; letter-spacing: 0;
+    }
+    .filter-select-all:hover { text-decoration: underline; }
+    .filter-option {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 14px; font-size: 12px; font-weight: 500; color: #333;
+      cursor: pointer; transition: background 0.1s; user-select: none;
+    }
+    .filter-option:hover { background: #f0f2f8; }
+    .filter-option input[type="checkbox"] { accent-color: #2a3766; width: 13px; height: 13px; cursor: pointer; }
+    .filter-divider { height: 1px; background: #f0f2f5; margin: 4px 0; }
+    .filter-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 6px 14px 8px; gap: 10px;
+    }
+    .filter-clear {
+      font-size: 11px; font-weight: 600; color: #999; cursor: pointer; transition: color 0.1s;
+    }
+    .filter-clear:hover { color: #cc3a33; }
+    .filter-apply {
+      font-size: 11px; font-weight: 700; color: #2a3766; cursor: pointer; transition: color 0.1s;
+    }
+    .filter-apply:hover { text-decoration: underline; }
+
+    /* Pagination */
+    .pagination {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 4px; padding: 14px 20px;
+    }
+    .page-btn {
+      min-width: 32px; height: 32px; padding: 0 8px;
+      border: 1px solid #d0d5e8; border-radius: 6px;
+      background: #fff; font-family: 'Open Sans', sans-serif;
+      font-size: 12px; font-weight: 600; color: #555;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .page-btn:hover { background: #f0f2f8; border-color: #b8bfd6; }
+    .page-btn.active { background: rgba(117,19,140,0.25); color: #75138c; border-color: transparent; cursor: default; font-weight: 700; }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+    .page-info { font-size: 12px; color: #888; margin-right: 8px; }
+    .back-title-text { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+
+    /* Unified field */
+    .field-label {
+      font-size: 12px; font-weight: 600; color: #1a1a2e;
+      margin-bottom: 5px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .field-label .req { color: #ff554d; }
+    .field-label .help-icon {
+      width: 14px; height: 14px;
+      border-radius: 9999px; border: 1.5px solid #bbb;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; color: #888; font-weight: 700; cursor: default;
+    }
+    .field-input {
+      width: 100%;
+      border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 9px 12px;
+      font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e;
+      background: #fff; outline: none;
+      transition: border-color 0.13s, box-shadow 0.13s;
+    }
+    .field-input:focus { border-color: #2a3766; box-shadow: 0 0 0 3px rgba(42,55,102,0.09); }
+    .field-input::placeholder { color: #c0c5d4; }
+    .field-input:disabled, .field-input[readonly] {
+      background: #f7f8fa; color: #555; cursor: default;
+      border-color: #e9e9e9;
+    }
+    textarea.field-input { resize: vertical; min-height: 88px; }
+    textarea.field-input:disabled, textarea.field-input[readonly] { background: #f7f8fa; color: #555; }
+    .field-hint { font-size: 11px; color: #999; margin-top: 4px; }
+    .field-group { display: flex; flex-direction: column; }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #75138c; color: #fff; border: none;
+      border-radius: 6px; padding: 9px 20px;
+      font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.13s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #5e0f70; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 600; color: #555;
+      cursor: pointer; transition: background 0.13s, border-color 0.13s; white-space: nowrap;
+    }
+    .btn-secondary:hover { background: #f0f2f8; border-color: #b8bfd6; }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 7px 14px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 600; color: #555;
+      cursor: pointer; transition: background 0.13s; white-space: nowrap;
+    }
+    .btn-ghost:hover { background: #f0f2f8; }
+
+    .btn-danger {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #ffb3b0; border-radius: 6px;
+      padding: 7px 14px;
+      font-family: 'Open Sans', sans-serif; font-size: 12px; font-weight: 600; color: #cc3a33;
+      cursor: pointer; transition: background 0.13s; white-space: nowrap;
+    }
+    .btn-danger:hover { background: #fff0ef; }
+
+    /* Card */
+    .card { background: #fff; border-radius: 10px; overflow: hidden; }
+
+    /* Panel */
+    .panel { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px;
+      border-bottom: 1px solid #e9e9e9; background: #fff;
+    }
+    .panel-header-left { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; color: #1a1a2e; }
+    .panel-header-accent { display: none; }
+    .panel-body { padding: 22px; }
+    .panel-form-actions { display: flex; justify-content: flex-end; padding-top: 8px; }
+
+    /* sm-btn */
+    .sm-btn {
+      width: 30px; height: 30px;
+      border: 1px solid #d0d5e8; border-radius: 6px;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #777; transition: all 0.12s; flex-shrink: 0;
+    }
+    .sm-btn:hover              { background: #f0f2f8; border-color: #b8bfd6; }
+    .sm-btn.edit-action:hover  { background: #fffbea; border-color: #ffe580; color: #c9a000; }
+    .sm-btn.danger:hover       { background: #fff0ef; border-color: #ffb3b0; color: #ff554d; }
+
+    /* Chips */
+    .chip {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+      background: #eef0f8; color: #2a3766; border: 1px solid #d0d5e8;
+      white-space: nowrap;
+    }
+    .chip.required { background: #fff4ec; color: #c45000; border-color: #ffd4b0; }
+    .chip.count    { background: #f0f2f8; color: #2a3766; border-color: #d0d5e8; }
+
+    /* btn-add-inline */
+    .btn-add-inline {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #fff; border: 1px solid #d0d5e8; border-radius: 6px;
+      padding: 5px 11px;
+      font-family: 'Open Sans', sans-serif; font-size: 11px; font-weight: 600; color: #2a3766;
+      cursor: pointer; transition: background 0.12s;
+    }
+    .btn-add-inline:hover { background: #eef0f8; }
+
+    /* ─── TEST MANAGEMENT — LIST ─── */
+    .tm-page-inner { max-width: 1320px; width: 100%; margin: 0 auto; }
+
+    .tm-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .tm-title-group { display: flex; align-items: center; gap: 10px; }
+    .tm-title { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+    .tm-count { background: #eef0f8; color: #2a3766; border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+
+    .tm-subtitle {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: #666;
+      margin-bottom: 22px;
+    }
+    .tm-subtitle-sep { color: #ccc; }
+    .tm-status-badge {
+      display: inline-flex; align-items: center;
+      background: #e6f9f0; color: #1a8c54;
+      border-radius: 9999px; padding: 2px 10px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    }
+    .tm-status-badge::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: #2dbe6c;
+      margin-right: 5px;
+    }
+
+    .tm-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { border-bottom: 1px solid #e9e9e9; }
+    th {
+      text-align: left; padding: 11px 16px;
+      font-size: 11px; font-weight: 700; color: #888;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap; background: #fff;
+    }
+    tbody tr { border-bottom: 1px solid #f0f2f5; transition: background 0.12s; cursor: pointer; }
+    tbody tr:hover { background: #f0f3fc; }
+
+    td { padding: 15px 16px; vertical-align: middle; }
+    .td-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .td-sub   { font-size: 12px; color: #999; margin-top: 2px; }
+
+    .id-chip {
+      display: inline-block;
+      font-size: 11.5px; font-family: 'Courier New', Courier, monospace; font-weight: 500;
+      color: #2a3766; background: #eef0f8; border: 1px solid #d0d5e8;
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .td-structure { font-size: 12px; color: #555; white-space: nowrap; }
+    .td-date      { font-size: 12px; color: #777; white-space: nowrap; }
+
+    .status-badge, .type-badge {
+      display: inline-flex; align-items: center;
+      padding: 2px 9px; border-radius: 9999px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .status-badge.completed  { background: #edfaf3; color: #1a9152; border: 1px solid #b6ecd1; }
+    .status-badge.scheduled  { background: #eef2ff; color: #4a6cf7; border: 1px solid #c5d0fc; }
+    .status-badge.cancelled  { background: #fff0ef; color: #cc3a33; border: 1px solid #ffb3b0; }
+    .status-badge.draft      { background: #f4f5f8; color: #777;    border: 1px solid #d8dae3; }
+    .type-badge.formative    { background: #f3eeff; color: #75138c; border: 1px solid #d9b8f0; }
+    .type-badge.summative    { background: #f3eeff; color: #7c3aed; border: 1px solid #d8b4fe; }
+    .type-badge.interim      { background: #eef2ff; color: #2a3766; border: 1px solid #c5d0fc; }
+
+    /* Row arrow indicator */
+
+    /* ─── DETAIL / EDIT PAGE shared ─── */
+    .detail-page-inner {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .detail-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
+    }
+
+    .detail-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+    /* ─── TEST STRUCTURE ─── */
+    .ts-part { border: 1px solid #e9e9e9; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+    .ts-part:last-child { margin-bottom: 0; }
+    .ts-part-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; background: #fafbfd; border-bottom: 1px solid #e9e9e9;
+    }
+    .ts-part-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #1a1a2e; }
+    .ts-part-actions { display: flex; gap: 5px; align-items: center; }
+
+    .ts-section { padding: 10px 14px 0; }
+    .ts-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; background: #f4f5f8; border-radius: 7px; margin-bottom: 8px;
+    }
+    .ts-section-left { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #1a1a2e; }
+
+    .ts-items { padding: 0 14px 12px; }
+    .ts-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border: 1px solid #e9e9e9; border-radius: 7px;
+      margin-bottom: 6px; background: #fff; transition: border-color 0.12s;
+    }
+    .ts-item:last-child { margin-bottom: 0; }
+    .ts-item:hover { border-color: #d0d5e8; }
+    .ts-item-icon { color: #d4962a; flex-shrink: 0; }
+    .ts-item-name { font-size: 12px; font-weight: 600; color: #1a1a2e; flex: 1; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .ts-item-id   { font-size: 11px; color: #aaa; font-weight: 400; font-family: monospace; }
+    .ts-item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+    /* ─── CREATE PAGE ─── */
+    .create-page-inner {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .create-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 20px;
+    }
+.create-card-body {
+      background: #fff; border: 1px solid #e9e9e9;
+      border-top: none; border-radius: 0 0 10px 10px; padding: 24px;
+    }
+    .create-form-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 10px; margin-top: 4px; border-top: 1px solid #f0f0f0;
+    }
+
+    /* Reference sidebar */
+    .ref-panel { background: #fff; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .ref-panel-header {
+      padding: 13px 16px; border-bottom: 1px solid #e9e9e9;
+      font-size: 12px; font-weight: 700; color: #1a1a2e;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .ref-panel-body { padding: 16px; font-size: 12px; color: #444; line-height: 1.6; }
+    .ref-panel-body strong { font-weight: 700; color: #1a1a2e; }
+    .ref-section-title { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px; }
+    .ref-section-title:first-of-type { margin-top: 0; }
+    .hierarchy-tree { list-style: none; }
+    .hierarchy-tree li { display: flex; align-items: flex-start; gap: 6px; padding: 3px 0; }
+    .hierarchy-tree li.l1 { padding-left: 14px; }
+    .hierarchy-tree li.l2 { padding-left: 28px; }
+    .hierarchy-tree li.l3 { padding-left: 42px; }
+    .hierarchy-tree .ht-icon  { flex-shrink: 0; margin-top: 1px; }
+    .hierarchy-tree .ht-label { font-weight: 600; color: #1a1a2e; }
+    .hierarchy-tree .ht-note  { color: #999; font-size: 11px; display: block; }
+    .key-list { list-style: none; }
+    .key-list li { padding: 3px 0; display: flex; gap: 6px; }
+    .key-list li::before { content: '•'; color: #2a3766; font-weight: 700; flex-shrink: 0; }
+
+    /* ─── View-only field display ─── */
+    .view-field {
+      width: 100%;
+      border: 1px solid #e9e9e9; border-radius: 6px;
+      padding: 9px 12px;
+      font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e;
+      background: #f7f8fa; line-height: 1.5;
+      min-height: 38px;
+    }
+    .view-field.multiline { min-height: 88px; }
+
+    /* Edit-mode toggle: show/hide */
+    .edit-mode .view-field    { display: none; }
+    .edit-mode .field-input   { display: block; }
+    .view-mode .view-field    { display: block; }
+    .view-mode .field-input   { display: none; }
+    .view-mode textarea.field-input { display: none; }
+    .view-mode .view-field.multiline { display: block; }
+
+    /* View/Edit state toggle on Save button */
+    .save-actions { display: flex; gap: 8px; justify-content: flex-end; padding-top: 8px; }
+
+    /* ─── Test Builder Wizard ─── */
+    .wz-hidden { display: none !important; }
+
+    /* Wizard step card header with inline ring */
+    .wz-step-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .wz-step-ring { flex-shrink: 0; }
+    .wz-card-title { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    /* Step transition animations */
+    #page-create-test { overflow-x: hidden; }
+    @keyframes wzExitLeft  { from { opacity:1; transform:translateX(0);       } to { opacity:0; transform:translateX(-22vw); } }
+    @keyframes wzExitRight { from { opacity:1; transform:translateX(0);       } to { opacity:0; transform:translateX(22vw);  } }
+    @keyframes wzEnterRight {
+      0%   { opacity:1; transform:translateX(100vw); }
+      72%  { opacity:1; transform:translateX(-10px); }
+      86%  { transform:translateX(5px); }
+      100% { opacity:1; transform:translateX(0); }
+    }
+    @keyframes wzEnterLeft {
+      0%   { opacity:1; transform:translateX(-100vw); }
+      72%  { opacity:1; transform:translateX(10px); }
+      86%  { transform:translateX(-5px); }
+      100% { opacity:1; transform:translateX(0); }
+    }
+    .wz-exit-left   { animation: wzExitLeft  0.18s ease-in  forwards; }
+    .wz-exit-right  { animation: wzExitRight 0.18s ease-in  forwards; }
+    .wz-enter-right { animation: wzEnterRight 0.48s cubic-bezier(0.25,1,0.5,1) forwards; }
+    .wz-enter-left  { animation: wzEnterLeft  0.48s cubic-bezier(0.25,1,0.5,1) forwards; }
+    .wz-card { background: #fff; border-radius: 10px; padding: 28px; margin-bottom: 20px; }
+    .wz-card-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .wz-card-desc { font-size: 13px; color: #888; margin-bottom: 20px; line-height: 1.5; }
+    .wz-name-input { font-size: 18px !important; padding: 14px 18px !important; }
+    .wz-sections-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .wz-section-item { display: flex; align-items: center; gap: 10px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 10px 14px; transition: border-color 0.15s; animation: fadeIn 0.15s ease; }
+    .wz-section-item:focus-within { border-color: #2a3766; }
+    .wz-section-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .wz-section-item input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e; }
+    .wz-section-count { font-size: 12px; color: #999; white-space: nowrap; }
+    .wz-add-section-row { display: flex; gap: 10px; }
+    .wz-q-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .wz-section-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .wz-section-tab { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #e9e9e9; background: #f7f8fa; color: #555; transition: all 0.15s; }
+    .wz-section-tab.active { border-color: #2a3766; color: #2a3766; background: #eef0f8; }
+    .wz-tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .wz-tab-count { background: #e9e9e9; border-radius: 10px; padding: 1px 6px; font-size: 11px; color: #555; }
+    .wz-section-tab.active .wz-tab-count { background: #d0d5e8; color: #2a3766; }
+    .wz-bank-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .wz-bank-title { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.06em; }
+    .wz-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; color: #999; }
+    .wz-search-bar { position: relative; margin-bottom: 10px; }
+    .wz-search-bar input { width: 100%; padding: 8px 12px 8px 34px; border: 1.5px solid #dde1ed; border-radius: 6px; font-family: 'Open Sans', sans-serif; font-size: 13px; color: #1a1a2e; background: #f7f8fa; outline: none; transition: border-color 0.15s; }
+    .wz-search-bar input:focus { border-color: #2a3766; background: #fff; }
+    .wz-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
+    .wz-filter-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+    .wz-chip { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e9e9e9; background: #f7f8fa; color: #888; transition: all 0.12s; }
+    .wz-chip.active { border-color: #75138c; color: #75138c; background: #f9eeff; }
+    .wz-chip:hover { color: #1a1a2e; border-color: #bbb; }
+    .wz-question-list { display: flex; flex-direction: column; gap: 5px; max-height: 360px; overflow-y: auto; padding-right: 2px; }
+    .wz-question-list::-webkit-scrollbar { width: 3px; }
+    .wz-question-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
+    .wz-q-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 7px; cursor: pointer; transition: all 0.12s; }
+    .wz-q-item:hover { border-color: #2a3766; background: #eef0f8; }
+    .wz-q-add-icon { font-size: 15px; color: #2a3766; flex-shrink: 0; margin-top: 2px; font-style: normal; font-weight: 700; }
+    .wz-q-text { flex: 1; font-size: 12px; line-height: 1.4; color: #1a1a2e; }
+    .wz-q-meta { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+    .wz-q-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+    .wz-tag-mc { background: #eef0f8; color: #2a3766; }
+    .wz-tag-tf { background: #fff4ee; color: #c45000; }
+    .wz-tag-sa { background: #edfaf3; color: #1a9152; }
+    .wz-tag-easy { background: #edfaf3; color: #1a9152; }
+    .wz-tag-medium { background: #fff4ee; color: #c45000; }
+    .wz-tag-hard { background: #fff0ef; color: #cc3a33; }
+    .wz-selected-panel { display: flex; flex-direction: column; }
+    .wz-selected-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .wz-selected-list { display: flex; flex-direction: column; gap: 5px; max-height: 360px; overflow-y: auto; padding-right: 2px; }
+    .wz-selected-list::-webkit-scrollbar { width: 3px; }
+    .wz-selected-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
+    .wz-sel-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; background: #f7f8fa; border: 1.5px solid #e9e9e9; border-radius: 7px; animation: fadeIn 0.15s ease; }
+    .wz-sel-num { width: 20px; height: 20px; border-radius: 5px; background: #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #555; flex-shrink: 0; margin-top: 1px; }
+    .wz-sel-text { flex: 1; font-size: 12px; line-height: 1.4; color: #1a1a2e; }
+    .wz-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; color: #bbb; border: 2px dashed #e9e9e9; border-radius: 8px; min-height: 180px; }
+    .wz-empty-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .wz-empty-text { font-size: 12px; line-height: 1.5; }
+    .wz-summary-name { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .wz-summary-meta { font-size: 13px; color: #888; margin-bottom: 24px; }
+    .wz-summary-section { margin-bottom: 18px; }
+    .wz-summary-section-header { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e9e9e9; }
+    .wz-summary-section-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .wz-summary-section-name { font-weight: 700; font-size: 14px; color: #1a1a2e; }
+    .wz-summary-section-count { font-size: 12px; color: #999; margin-left: auto; }
+    .wz-summary-q { display: flex; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f4f4f4; font-size: 12px; color: #555; }
+    .wz-summary-q:last-child { border-bottom: none; }
+    .wz-summary-q-num { color: #bbb; min-width: 18px; }
+    .wz-nav { display: flex; justify-content: flex-end; align-items: center; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+    .wz-nav-right { display: flex; gap: 8px; }
+    .wz-nav .btn-ghost { font-size: 13px; padding: 9px 20px; }
+    .wz-toast { position: fixed; bottom: 24px; right: 24px; background: #fff; border: 1px solid #e9e9e9; color: #1a1a2e; padding: 12px 18px; border-radius: 8px; font-family: 'Open Sans', sans-serif; font-size: 13px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.12); transform: translateY(70px); opacity: 0; transition: all 0.3s ease; z-index: 1000; }
+    .wz-toast.show { transform: translateY(0); opacity: 1; }
+    /* Drag handle */
+    .wz-drag-handle { color: #ccc; cursor: grab; font-size: 16px; padding: 0 2px; line-height: 1; flex-shrink: 0; }
+    .wz-drag-handle:active { cursor: grabbing; }
+    .wz-section-item { transition: transform 0.18s ease; }
+    .wz-section-item.wz-dragging { opacity: 0.25; cursor: grabbing; border-radius: 10px; }
+    /* Sub-sections */
+    .wz-section-sub { margin-left: 28px; background: #fff; }
+    .wz-sub-dropzone {
+      display: none; margin-left: 28px; margin-top: 4px; margin-bottom: 4px;
+      height: 32px; border: 1.5px dashed #d0d5e8; border-radius: 7px;
+      align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; color: #bbb; gap: 6px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s; cursor: default;
+    }
+    .wz-sections-list.wz-drag-active .wz-sub-dropzone { display: flex; }
+    .wz-sections-list.wz-drag-active .wz-sub-dropzone.wz-drag-src-zone { display: none; }
+    .wz-sub-dropzone.wz-nest-over { border-color: #2a3766; background: #eef0f8; color: #2a3766; }
+    /* Student picker */
+    .wz-student-list { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
+    .wz-student-list::-webkit-scrollbar { width: 3px; }
+    .wz-student-list::-webkit-scrollbar-thumb { background: #dde1ed; border-radius: 3px; }
+    .wz-student-item { display: flex; align-items: center; gap: 10px; padding: 8px 11px; border-radius: 7px; cursor: pointer; transition: background 0.12s; font-size: 13px; color: #1a1a2e; }
+    .wz-student-item:hover { background: #f0f2f8; }
+    .wz-student-item.selected { background: #eef0f8; }
+    .wz-student-cb { width: 15px; height: 15px; border: 1.5px solid #d0d5e8; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+    .wz-student-item.selected .wz-student-cb { background: #75138c; border-color: #75138c; color: #fff; font-size: 10px; }
+    .wz-student-count { font-size: 12px; color: #888; margin-top: 8px; }
+    /* Review items in schedule step */
+    .wz-review-section { margin-bottom: 12px; }
+    .wz-review-section-header { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px; }
+    .wz-review-item { font-size: 12px; color: #555; padding: 5px 0 5px 20px; border-bottom: 1px solid #f4f4f4; display: flex; gap: 8px; }
+    .wz-review-item:last-child { border-bottom: none; }
+    .wz-review-item-num { color: #bbb; min-width: 18px; flex-shrink: 0; }
+    /* Step tabs: done tabs are clickable */
+    .wz-step.done { cursor: pointer; }
+    .wz-step.done:hover { color: #1a9152; background: #f4fdf7; border-radius: 6px; }
+    /* Schedule step layout */
+    .wz-schedule-layout { display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
+    .wz-schedule-section-header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; }
+    .wz-radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .wz-radio-card { display: block; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+    .wz-radio-card:hover { border-color: #d0d5e8; }
+    .wz-radio-card.wz-radio-selected { border-color: #75138c; background: #fdf8ff; }
+    .wz-radio-card input[type="radio"] { display: none; }
+    .wz-radio-inner { display: flex; align-items: flex-start; gap: 12px; }
+    .wz-radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #d0d5e8; flex-shrink: 0; margin-top: 2px; transition: all 0.15s; position: relative; }
+    .wz-radio-selected .wz-radio-dot { border-color: #75138c; background: #75138c; box-shadow: inset 0 0 0 3px #fff; }
+    .wz-radio-title { font-size: 13px; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
+    .wz-radio-desc { font-size: 12px; color: #888; line-height: 1.4; }
+    /* Duration slider */
+    .wz-duration-slider { width: 100%; margin-bottom: 14px; accent-color: #75138c; cursor: pointer; height: 4px; }
+    .wz-duration-presets { display: flex; gap: 8px; flex-wrap: wrap; }
+    .wz-duration-preset { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid #e9e9e9; background: #fff; color: #555; transition: all 0.12s; }
+    .wz-duration-preset:hover { border-color: #bbb; }
+    .wz-duration-active { border-color: #75138c !important; background: #75138c !important; color: #fff !important; }
+    /* Schedule sidebar */
+    .wz-schedule-sidebar { background: #fff; border-radius: 10px; padding: 24px; align-self: start; }
+    .wz-sidebar-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; }
+    .wz-sidebar-row { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .wz-sidebar-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+    .wz-sidebar-value { font-size: 14px; color: #1a1a2e; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://www.cognia.org/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2019/08/cropped-logo-300.png.webp" alt="Cognia" style="height:32px;width:auto;display:block;">
+  </div>
+  <nav>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span style="overflow:hidden;text-overflow:ellipsis">Student Roster Manag…</span>
+      <svg class="nav-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      Item Management
+    </div>
+    <div class="nav-item" data-page="test-management">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Tests
+    </div>
+    <div class="nav-item" data-page="">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Curriculum
+    </div>
+  </nav>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="icon-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </div>
+      <div class="avatar" style="font-size:11px;">AJ</div>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════
+       DASHBOARD
+  ═════════════════════════════ -->
+  <div class="page" id="page-dashboard">
+    <h1 class="page-title">School Administrator Dashboard</h1>
+    <p class="page-subtitle">Welcome back! Here's an overview of your assessment activities</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="stat-badge">+12%</span>
+        </div>
+        <div class="stat-label">Total Students</div><div class="stat-value">156</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div>
+          <span class="stat-badge">+3</span>
+        </div>
+        <div class="stat-label">Active Tests</div><div class="stat-value">8</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="10" cy="14" r="2"/><path d="M14 14h2"/></svg></div>
+          <span class="stat-badge">+28</span>
+        </div>
+        <div class="stat-label">Questions</div><div class="stat-value">342</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div>
+          <span class="stat-badge">+5%</span>
+        </div>
+        <div class="stat-label">Avg. Score</div><div class="stat-value">78%</div>
+      </div>
+    </div>
+    <div class="section-title">Quick Actions</div>
+    <div class="actions-grid">
+      <div class="action-card"><div class="action-icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="10" cy="14" r="2"/><path d="M14 14h2"/></svg></div><div class="action-name">Questions</div><div class="action-desc">Create and manage questions</div></div>
+      <div class="action-card"><div class="action-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div><div class="action-name">Tests</div><div class="action-desc">Build and assign tests</div></div>
+      <div class="action-card"><div class="action-icon purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><div class="action-name">Curriculum</div><div class="action-desc">Organize learning materials</div></div>
+    </div>
+    <div class="section-title">Recent Activity</div>
+    <div class="activity-list">
+      <div class="activity-item"><div class="activity-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="activity-info"><div class="activity-name">Math Quiz - Chapter 5</div><div class="activity-sub">Completed by 24 students</div></div><div class="activity-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>2 hours ago</div></div>
+      <div class="activity-item"><div class="activity-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="activity-info"><div class="activity-name">New question added</div><div class="activity-sub">Algebra - Quadratic Equations</div></div><div class="activity-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 hours ago</div></div>
+      <div class="activity-item"><div class="activity-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></div><div class="activity-info"><div class="activity-name">Test graded</div><div class="activity-sub">Science Test - Unit 3</div></div><div class="activity-time"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1 day ago</div></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TEST MANAGEMENT — LIST
+  ═════════════════════════════ -->
+  <div class="page" id="page-test-management">
+    <div class="tm-page-inner">
+      <div class="tm-header">
+        <div class="tm-title-group">
+          <span class="tm-title">Tests</span>
+        </div>
+        <button class="btn-primary" id="btn-create-test">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Test
+        </button>
+      </div>
+
+      <div class="tm-stats-row">
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          </div>
+          <div class="stat-label">Course</div><div class="stat-value" style="font-size:13px;font-weight:600">Grade 4 Mathematics</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          </div>
+          <div class="stat-label">Assessment Duration</div><div class="stat-value" style="font-size:13px;font-weight:600">16 Jan – 18 Jul 2026</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          </div>
+          <div class="stat-label">Students</div><div class="stat-value">156</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          </div>
+          <div class="stat-label">Tests Completed</div><div class="stat-value">9</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" id="table-search" type="text" placeholder="Search tests…">
+          </div>
+        </div>
+        <table style="table-layout:fixed">
+          <colgroup>
+            <col style="width:34%">
+            <col style="width:13%">
+            <col style="width:9%">
+            <col style="width:12%">
+            <col style="width:18%">
+            <col style="width:14%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th><div class="th-cell"><span class="th-inner" data-col="0">Name<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span>Type</span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="2">Items<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="3">Total Points<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th><div class="th-cell"><span class="th-inner" data-col="4">Date of Test<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span></div></th>
+              <th>
+                <div class="th-cell">
+                  <span class="th-inner" data-col="5">Status<svg class="sort-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 3 18 9"/><polyline points="6 15 12 21 18 15"/></svg></span>
+                  <button class="filter-btn" id="status-filter-btn" title="Filter by Status"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>
+                </div>
+                <div class="filter-dropdown" id="status-filter-dropdown">
+                  <div class="filter-header">Filter by Status <span class="filter-select-all" id="status-select-all">Select all</span></div>
+                  <label class="filter-option"><input type="checkbox" value="Completed"> Completed</label>
+                  <label class="filter-option"><input type="checkbox" value="Scheduled"> Scheduled</label>
+                  <label class="filter-option"><input type="checkbox" value="Cancelled"> Cancelled</label>
+                  <label class="filter-option"><input type="checkbox" value="Draft"> Draft</label>
+                  <div class="filter-divider"></div>
+                  <div class="filter-footer">
+                    <span class="filter-clear" id="status-filter-clear">Clear</span>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="test-table-body">
+            <tr class="test-row" data-test="1">
+              <td><div class="td-title">Place Value and Number Sense</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>8</td><td>80</td>
+              <td><span class="td-date">28 Jan 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="2">
+              <td><div class="td-title">Addition and Subtraction to 10,000</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">04 Feb 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="3">
+              <td><div class="td-title">Multiplication Concepts and Strategies</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>6</td><td>60</td>
+              <td><span class="td-date">11 Feb 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="4">
+              <td><div class="td-title">Division Facts and Relationships</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">18 Feb 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="5">
+              <td><div class="td-title">Multi-Digit Multiplication</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">25 Feb 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="6">
+              <td><div class="td-title">Fractions – Equivalence and Ordering</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">04 Mar 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="7">
+              <td><div class="td-title">Adding and Subtracting Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">11 Mar 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="8">
+              <td><div class="td-title">Decimals – Tenths and Hundredths</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">18 Mar 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="9">
+              <td><div class="td-title">Measurement – Length, Mass and Capacity</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">25 Mar 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="10">
+              <td><div class="td-title">Area and Perimeter</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">01 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="11">
+              <td><div class="td-title">Time – Elapsed Time and Schedules</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">08 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="12">
+              <td><div class="td-title">Geometry – Angles and Lines</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>6</td><td>60</td>
+              <td><span class="td-date">15 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="13">
+              <td><div class="td-title">2D Shapes and Symmetry</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">22 Apr 2026</span></td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+            <tr class="test-row" data-test="14">
+              <td><div class="td-title">Data – Tables, Bar Graphs and Line Plots</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">29 Apr 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="15">
+              <td><div class="td-title">Number Patterns and Algebraic Thinking</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">06 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="16">
+              <td><div class="td-title">Rounding to Nearest 10 and 100</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">13 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="17">
+              <td><div class="td-title">Factors and Multiples</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">20 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="18">
+              <td><div class="td-title">Comparing and Ordering Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">27 May 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="19">
+              <td><div class="td-title">Mixed Numbers and Improper Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">03 Jun 2026</span></td>
+              <td><span class="status-badge scheduled">Scheduled</span></td>
+            </tr>
+            <tr class="test-row" data-test="20">
+              <td><div class="td-title">Decimal Place Value and Notation</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">10 Jun 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="21">
+              <td><div class="td-title">Adding and Subtracting Decimals</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">17 Jun 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="22">
+              <td><div class="td-title">Properties of Multiplication and Division</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>4</td><td>40</td>
+              <td><span class="td-date">24 Jun 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="23">
+              <td><div class="td-title">Line Plots and Data Interpretation</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>3</td><td>30</td>
+              <td><span class="td-date">01 Jul 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="24">
+              <td><div class="td-title">Problem Solving with Fractions</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>5</td><td>50</td>
+              <td><span class="td-date">08 Jul 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+            <tr class="test-row" data-test="25">
+              <td><div class="td-title">Angles – Measuring and Classifying</div></td>
+              <td><span class="type-badge formative">Formative</span></td>
+              <td>6</td><td>60</td>
+              <td><span class="td-date">15 Jul 2026</span></td>
+              <td><span class="status-badge draft">Draft</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       ASSESSMENT DETAIL (view/edit)
+  ═════════════════════════════ -->
+  <div class="page" id="page-view-test">
+    <div class="detail-page-inner">
+
+      <div class="detail-header">
+        <!-- Chevron + title back navigation -->
+        <div class="back-title" id="detail-back-btn">
+          <div class="back-title-chevron">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <span class="back-title-text" id="detail-title">Math Grade 5 Test</span>
+          <span id="detail-title-status"></span>
+        </div>
+
+        <div class="detail-actions">
+          <button class="btn-ghost" id="btn-detail-preview">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            Preview
+          </button>
+          <button class="btn-ghost" id="btn-detail-export-xml">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            Export to XML
+          </button>
+          <button class="btn-ghost" id="btn-detail-edit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn-danger" id="btn-detail-delete">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- Metadata panel -->
+      <div class="panel" id="metadata-panel">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-accent navy"></div>
+            Test Details
+          </div>
+          <!-- Save/Cancel only shown in edit mode -->
+          <div class="save-actions" id="metadata-save-actions" style="display:none">
+            <button class="btn-ghost" id="btn-metadata-cancel">Cancel</button>
+            <button class="btn-primary" id="btn-metadata-save">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="panel-body view-mode" id="metadata-body">
+          <div style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Name</div>
+              <div class="view-field" id="detail-vf-name"></div>
+              <input class="field-input" id="detail-in-name" type="text">
+            </div>
+          </div>
+          <div class="grid-3" style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Type</div>
+              <div class="view-field" id="detail-vf-type"></div>
+              <input class="field-input" id="detail-in-type" type="text">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Date of Test</div>
+              <div class="view-field" id="detail-vf-date"></div>
+              <input class="field-input" id="detail-in-date" type="text">
+            </div>
+          </div>
+          <div class="field-group" style="margin-bottom:16px">
+            <div class="field-label">Description</div>
+            <div class="view-field multiline" id="detail-vf-description"></div>
+            <textarea class="field-input" id="detail-in-description"></textarea>
+          </div>
+          <div class="grid-3">
+            <div class="field-group">
+              <div class="field-label">Language</div>
+              <div class="view-field" id="detail-vf-language">en-US</div>
+              <input class="field-input" id="detail-in-language" type="text" value="en-US">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Tool Name</div>
+              <div class="view-field" id="detail-vf-toolname">Cognia TEI authoring system</div>
+              <input class="field-input" id="detail-in-toolname" type="text" value="Cognia TEI authoring system">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Tool Version</div>
+              <div class="view-field" id="detail-vf-toolversion">1.0.0</div>
+              <input class="field-input" id="detail-in-toolversion" type="text" value="1.0.0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test structure panel (always read-only) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-accent coral"></div>
+            Test Structure
+          </div>
+        </div>
+        <div class="panel-body" id="detail-structure-body" style="font-size:12px;color:#444;line-height:1.6">
+          <div style="font-size:12px;color:#bbb;padding:4px 0">No structure data available.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       CREATE TEST
+  ═════════════════════════════ -->
+  <div class="page" id="page-create-test">
+    <div class="create-page-inner" style="max-width:960px">
+
+      <div class="back-title" id="create-back-btn" style="margin-bottom:20px">
+        <div class="back-title-chevron">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <span class="back-title-text">New Test</span>
+      </div>
+
+      <!-- Hidden tab elements so JS doesn't crash -->
+      <span id="wz-step-tab-1" style="display:none"></span>
+      <span id="wz-step-tab-2" style="display:none"></span>
+      <span id="wz-step-tab-3" style="display:none"></span>
+      <span id="wz-step-tab-4" style="display:none"></span>
+
+      <!-- STEP 1: Name Test -->
+      <div id="wz-step-1">
+        <div class="wz-card">
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="26.7 80" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Name your test</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Give your test a meaningful name and select the course it belongs to.</div>
+            </div>
+          </div>
+          <div class="field-group" style="margin-bottom:16px">
+            <div class="field-label">Name <span class="req">*</span></div>
+            <input class="field-input" id="wz-test-name" type="text" placeholder="e.g. Grade 5 Mathematics — Term 2 Assessment" maxlength="80">
+          </div>
+          <div class="grid-2" style="margin-bottom:16px">
+            <div class="field-group">
+              <div class="field-label">Type</div>
+              <select class="field-input" id="wz-test-type">
+                <option value="formative" selected>Formative</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Course <span class="req">*</span></div>
+              <select class="field-input" id="wz-test-course">
+                <option value="" disabled selected>Select course…</option>
+                <option value="grade6-math">Grade 6 Mathematics</option>
+                <option value="grade6-ela">Grade 6 English Language Arts</option>
+                <option value="grade7-math">Grade 7 Mathematics</option>
+                <option value="grade7-ela">Grade 7 English Language Arts</option>
+                <option value="grade8-math">Grade 8 Mathematics</option>
+                <option value="grade8-ela">Grade 8 English Language Arts</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <div class="wz-nav-right">
+            <button class="btn-ghost" id="wz-btn-cancel">Cancel</button>
+            <button class="btn-primary" onclick="wzGoToStep(2)">Next: Add Sections →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Add Sections -->
+      <div id="wz-step-2" class="wz-hidden">
+        <div class="wz-card">
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="53.4 53.4" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Add sections</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Organise your test into sections by topic or part, then drag to reorder them.</div>
+            </div>
+          </div>
+          <div class="wz-sections-list" id="wz-sections-list"></div>
+          <div class="wz-add-section-row">
+            <input class="field-input" id="wz-new-section-input" type="text" placeholder="Section name (e.g. Algebra)" maxlength="50" onkeydown="if(event.key==='Enter') wzAddSection()">
+            <button class="btn-secondary" onclick="wzAddSection()">+ Add</button>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <div class="wz-nav-right">
+            <button class="btn-ghost" onclick="wzGoToStep(1)">← Back</button>
+            <button class="btn-primary" onclick="wzGoToStep(3)">Next: Pick Items →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Pick Items -->
+      <div id="wz-step-3" class="wz-hidden">
+        <div class="wz-card">
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="80 26.7" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Pick items</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Select a section tab, then browse and filter items to add to it. Each item can only be added to one section.</div>
+            </div>
+          </div>
+          <div class="wz-section-tabs" id="wz-section-tabs"></div>
+          <div class="wz-q-layout">
+            <!-- Bank -->
+            <div>
+              <div class="wz-bank-header">
+                <span class="wz-bank-title">Items</span>
+                <span class="wz-badge" id="wz-bank-count">0 items</span>
+              </div>
+              <div class="wz-search-bar">
+                <svg class="wz-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="wz-search-input" placeholder="Search items…" oninput="wzFilterQuestions()">
+              </div>
+              <div class="wz-filter-chips">
+                <span class="wz-chip" onclick="wzToggleFilter(this,'mc')">Multiple Choice</span>
+                <span class="wz-chip" onclick="wzToggleFilter(this,'tf')">True / False</span>
+                <span class="wz-chip" onclick="wzToggleFilter(this,'sa')">Short Answer</span>
+              </div>
+              <div class="wz-question-list" id="wz-question-list"></div>
+            </div>
+            <!-- Selected -->
+            <div class="wz-selected-panel">
+              <div class="wz-selected-header">
+                <span class="wz-bank-title">Added to Section</span>
+                <span class="wz-badge" id="wz-selected-count">0</span>
+              </div>
+              <div class="wz-selected-list" id="wz-selected-list">
+                <div class="wz-empty-state">
+                  <div class="wz-empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+                  <div class="wz-empty-text">Click an item to add it<br>to this section</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <div class="wz-nav-right">
+            <button class="btn-ghost" onclick="wzGoToStep(2)">← Back</button>
+            <button class="btn-primary" onclick="wzGoToStep(4)">Next: Review →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Review -->
+      <div id="wz-step-4" class="wz-hidden">
+        <div class="wz-card">
+          <div class="wz-step-header">
+            <div class="wz-step-ring">
+              <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#ede8f5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="17" fill="none" stroke="#75138c" stroke-width="4"
+                  stroke-dasharray="106.8 0" stroke-dashoffset="0"
+                  transform="rotate(-90 22 22)" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="wz-card-title" style="margin-bottom:2px">Review your test</div>
+              <div class="wz-card-desc" style="margin-bottom:0">Check your sections and selected items before scheduling.</div>
+            </div>
+          </div>
+          <div id="wz-review-sections"></div>
+        </div>
+        <div class="wz-nav">
+          <div class="wz-nav-right">
+            <button class="btn-ghost" onclick="wzGoToStep(3)">← Back</button>
+            <button class="btn-ghost" id="wz-btn-draft">Save as Draft</button>
+            <button class="btn-primary" id="wz-btn-save">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Create Test
+            </button>
+          </div>
+        </div>
+
+      <div class="create-layout" style="display:none">
+        <!-- Form card -->
+        <div>
+          <div class="panel-header" style="border-radius:10px 10px 0 0;border:1px solid #e9e9e9;border-bottom:1px solid #e9e9e9;">
+            <div class="panel-header-left">
+              <div class="panel-header-accent navy"></div>
+              Test Details
+            </div>
+          </div>
+          <div class="create-card-body">
+            <div style="margin-bottom:16px">
+              <div class="field-group">
+                <div class="field-label">Name <span class="req">*</span></div>
+                <input class="field-input" type="text" placeholder="e.g., Grade 5 Mathematics Assessment">
+                <div class="field-hint">Displayed to candidates</div>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-bottom:16px">
+              <div class="field-group">
+                <div class="field-label">Type <span class="req">*</span></div>
+                <select class="field-input">
+                  <option value="" disabled selected>Select type…</option>
+                  <option value="formative">Formative</option>
+                  <option value="summative">Summative</option>
+                  <option value="interim">Interim</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Status <span class="req">*</span></div>
+                <select class="field-input">
+                  <option value="" disabled selected>Select status…</option>
+                  <option value="draft">Draft</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-bottom:16px">
+              <div class="field-group">
+                <div class="field-label">Date of Test</div>
+                <input class="field-input" type="date">
+              </div>
+              <div class="field-group">
+                <div class="field-label">Language <span class="help-icon">?</span></div>
+                <input class="field-input" type="text" value="en-US">
+                <div class="field-hint">e.g., en-US, es-ES, fr-FR</div>
+              </div>
+            </div>
+            <div class="field-group" style="margin-bottom:16px">
+              <div class="field-label">Description</div>
+              <textarea class="field-input" placeholder="Describe the purpose and content of this assessment…"></textarea>
+            </div>
+            <div class="grid-2" style="margin-bottom:20px">
+              <div class="field-group">
+                <div class="field-label">Tool Name</div>
+                <input class="field-input" type="text" placeholder="e.g., TEI Authoring System">
+                <div class="field-hint">Tool that created this test</div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Tool Version</div>
+                <input class="field-input" type="text" placeholder="e.g., 1.0.0">
+                <div class="field-hint">Tool version number</div>
+              </div>
+            </div>
+            <div class="create-form-actions">
+              <div></div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <button class="btn-ghost" id="btn-create-cancel" style="padding:9px 20px;font-size:13px;">Cancel</button>
+                <button class="btn-primary">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Create Test
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference sidebar -->
+        <div class="ref-panel">
+          <div class="ref-panel-header">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="#2a3766"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Test Structure
+          </div>
+          <div class="ref-panel-body">
+            <div style="font-size:12px;color:#bbb;padding:8px 0">Select a test to view its structure.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item[data-page]');
+
+  function showPage(pageId, activeNavPage) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageId);
+    if (target) target.classList.add('active');
+    navItems.forEach(n => n.classList.remove('active'));
+    const nav = document.querySelector(`.nav-item[data-page="${activeNavPage || pageId}"]`);
+    if (nav) nav.classList.add('active');
+  }
+
+  // ── Table: search, sort, filter, paginate ──
+  const ROWS_PER_PAGE = 10;
+  let currentPage = 1;
+  let sortCol = -1, sortAsc = true;
+  let searchQuery = '';
+  let typeFilters = new Set();
+  let statusFilters = new Set();
+
+  const allRows = Array.from(document.querySelectorAll('#test-table-body .test-row'));
+
+  function getCellText(row, col) {
+    const cells = row.querySelectorAll('td');
+    return cells[col] ? cells[col].textContent.trim() : '';
+  }
+
+  function applyTable() {
+    // Filter
+    let visible = allRows.filter(row => {
+      const name = getCellText(row, 0).toLowerCase();
+      const type = getCellText(row, 1).trim();
+      const status = getCellText(row, 5).trim();
+      const q = searchQuery.toLowerCase();
+      const matchSearch = !q || name.includes(q);
+      const matchType   = type === 'Formative';
+      const matchStatus = statusFilters.size === 0 || statusFilters.has(status);
+      return matchSearch && matchType && matchStatus;
+    });
+
+    // Sort
+    if (sortCol >= 0) {
+      visible.sort((a, b) => {
+        const va = getCellText(a, sortCol).toLowerCase();
+        const vb = getCellText(b, sortCol).toLowerCase();
+        return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+      });
+    }
+
+    // Hide all, show sorted/filtered
+    allRows.forEach(r => { r.style.display = 'none'; r.parentNode.appendChild(r); });
+    visible.forEach(r => r.parentNode.appendChild(r));
+
+    // Paginate
+    const totalPages = Math.max(1, Math.ceil(visible.length / ROWS_PER_PAGE));
+    if (currentPage > totalPages) currentPage = 1;
+    visible.forEach((row, i) => {
+      row.style.display = (i >= (currentPage - 1) * ROWS_PER_PAGE && i < currentPage * ROWS_PER_PAGE) ? '' : 'none';
+    });
+
+    // Pagination UI
+    const pg = document.getElementById('pagination');
+    pg.innerHTML = '';
+    if (visible.length === 0) { pg.innerHTML = '<span class="page-info">No results</span>'; return; }
+
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    const start = (currentPage - 1) * ROWS_PER_PAGE + 1;
+    const end = Math.min(currentPage * ROWS_PER_PAGE, visible.length);
+    info.textContent = `${start}–${end} of ${visible.length}`;
+    pg.appendChild(info);
+
+    const prev = document.createElement('button');
+    prev.className = 'page-btn';
+    prev.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>';
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', () => { currentPage--; applyTable(); });
+    pg.appendChild(prev);
+
+    for (let p = 1; p <= totalPages; p++) {
+      const btn = document.createElement('button');
+      btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+      btn.textContent = p;
+      btn.addEventListener('click', () => { currentPage = p; applyTable(); });
+      pg.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.className = 'page-btn';
+    next.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', () => { currentPage++; applyTable(); });
+    pg.appendChild(next);
+  }
+
+  // Sort headers
+  document.querySelectorAll('.th-inner').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = parseInt(th.dataset.col);
+      if (sortCol === col) { sortAsc = !sortAsc; }
+      else { sortCol = col; sortAsc = true; }
+      document.querySelectorAll('.th-inner').forEach(t => t.classList.remove('asc','desc'));
+      th.classList.add(sortAsc ? 'asc' : 'desc');
+      currentPage = 1; applyTable();
+    });
+  });
+
+  // Search
+  document.getElementById('table-search').addEventListener('input', e => {
+    searchQuery = e.target.value; currentPage = 1; applyTable();
+  });
+
+  // Filter dropdowns
+  const allDropdowns = [];
+
+  function closeAllDropdowns(except) {
+    allDropdowns.forEach(({ dd, btn }) => {
+      if (dd !== except) { dd.classList.remove('open'); btn.classList.remove('open'); }
+    });
+  }
+
+  function updateFilterBtnState(btn, dd, filterSet) {
+    const isFiltered = filterSet.size > 0;
+    btn.classList.toggle('active', isFiltered);
+  }
+
+  function initFilterDropdown(btnId, dropdownId, clearId, selectAllId, filterSet) {
+    const btn = document.getElementById(btnId);
+    const dd  = document.getElementById(dropdownId);
+    allDropdowns.push({ dd, btn });
+
+    // Toggle open
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const isOpen = dd.classList.contains('open');
+      closeAllDropdowns(dd);
+      dd.classList.toggle('open', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+    });
+
+    // Stop clicks inside dropdown from closing it
+    dd.addEventListener('click', e => e.stopPropagation());
+
+    // Checkboxes
+    dd.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) filterSet.add(cb.value); else filterSet.delete(cb.value);
+        updateFilterBtnState(btn, dd, filterSet);
+        currentPage = 1; applyTable();
+      });
+    });
+
+    // Clear
+    document.getElementById(clearId).addEventListener('click', () => {
+      dd.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; filterSet.delete(cb.value); });
+      updateFilterBtnState(btn, dd, filterSet);
+      currentPage = 1; applyTable();
+    });
+
+    // Select all
+    document.getElementById(selectAllId).addEventListener('click', () => {
+      dd.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = true; filterSet.add(cb.value); });
+      updateFilterBtnState(btn, dd, filterSet);
+      currentPage = 1; applyTable();
+    });
+  }
+
+  initFilterDropdown('status-filter-btn', 'status-filter-dropdown', 'status-filter-clear', 'status-select-all', statusFilters);
+
+  // Close on outside click
+  document.addEventListener('click', () => closeAllDropdowns(null));
+
+  // Close on Escape
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllDropdowns(null); });
+
+  // Default landing page
+  showPage('test-management');
+  applyTable();
+
+  // Sidebar nav
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.page) showPage(item.dataset.page);
+    });
+  });
+
+  // ── Test list: click row → detail view ──
+  // ── Test structure mock data ──────────────────────────────────────────────
+  const TEST_STRUCTURES = {
+    1:  [{ name:'Place Value', color:'#2a3766', items:[8,9,10,11] }, { name:'Number Sense', color:'#75138c', items:[12,13,14,15] }],
+    2:  [{ name:'Addition', color:'#2dbe6c', items:[1,2,3] }, { name:'Subtraction', color:'#ff8c42', items:[4,5] }],
+    3:  [{ name:'Concepts', color:'#4a6cf7', items:[3,4,5] }, { name:'Strategies', color:'#75138c', items:[6,7,8] }],
+    4:  [{ name:'Division Facts', color:'#2a3766', items:[9,10,11] }],
+    5:  [{ name:'Estimation', color:'#ff8c42', items:[12,13] }, { name:'Standard Algorithm', color:'#2a3766', items:[14,15] }],
+    6:  [{ name:'Equivalence', color:'#2dbe6c', items:[8,9,10] }, { name:'Ordering', color:'#4a6cf7', items:[11,12] }],
+    7:  [{ name:'Like Denominators', color:'#75138c', items:[9,10] }, { name:'Unlike Denominators', color:'#ff8c42', items:[11,12] }],
+    8:  [{ name:'Tenths', color:'#2a3766', items:[7,8,9] }, { name:'Hundredths', color:'#2dbe6c', items:[10,11] }],
+    9:  [{ name:'Measurement Concepts', color:'#4a6cf7', items:[14,15,16] }],
+    10: [{ name:'Area', color:'#75138c', items:[14,15] }, { name:'Perimeter', color:'#ff8c42', items:[16,17] }],
+    11: [{ name:'Elapsed Time', color:'#2a3766', items:[15,16,17] }, { name:'Schedules', color:'#2dbe6c', items:[18,19] }],
+    12: [{ name:'Angles', color:'#4a6cf7', items:[14,15,16] }, { name:'Lines', color:'#75138c', items:[17,18,19] }],
+    13: [{ name:'2D Shapes', color:'#ff8c42', items:[3,4,5] }, { name:'Symmetry', color:'#2a3766', items:[6,7] }],
+    14: [{ name:'Tables', color:'#2dbe6c', items:[20,1] }, { name:'Bar Graphs & Line Plots', color:'#4a6cf7', items:[2,3] }],
+    15: [{ name:'Number Patterns', color:'#2a3766', items:[1,2,3] }],
+    16: [{ name:'Nearest 10', color:'#75138c', items:[4,5] }, { name:'Nearest 100', color:'#ff8c42', items:[6,7] }],
+    17: [{ name:'Factors', color:'#2dbe6c', items:[8,9,10] }, { name:'Multiples', color:'#4a6cf7', items:[11,12] }],
+    18: [{ name:'Comparing Fractions', color:'#2a3766', items:[8,9,10] }, { name:'Mixed Numbers', color:'#75138c', items:[11,12] }],
+    19: [{ name:'Ratio Concepts', color:'#ff8c42', items:[7,8,9] }, { name:'Rate Problems', color:'#2dbe6c', items:[10,11] }],
+    20: [{ name:'Mean & Median', color:'#4a6cf7', items:[20,1,2] }],
+    21: [{ name:'Probability', color:'#75138c', items:[19,20,1] }, { name:'Outcomes', color:'#2a3766', items:[2,3] }],
+    22: [{ name:'3D Shapes', color:'#ff8c42', items:[14,15] }, { name:'Volume', color:'#2dbe6c', items:[16,17,18] }],
+    23: [{ name:'Coordinates', color:'#2a3766', items:[5,6,7] }, { name:'Transformations', color:'#4a6cf7', items:[8,9] }],
+    24: [{ name:'Equations', color:'#75138c', items:[1,2,3,4] }],
+    25: [{ name:'Word Problems', color:'#ff8c42', items:[17,18,19,20] }, { name:'Multi-Step', color:'#2a3766', items:[5,6] }],
+  };
+
+  function renderDetailStructure(testId) {
+    const panel = document.getElementById('detail-structure-body');
+    if (!panel) return;
+    const sections = TEST_STRUCTURES[testId];
+    if (!sections) { panel.innerHTML = '<div style="font-size:12px;color:#bbb;padding:8px 0">No structure data available.</div>'; return; }
+    const typeLabels = { mc:'MC', tf:'T/F', sa:'SA' };
+    let html = '';
+    sections.forEach(s => {
+      const items = s.items.map(id => WZ_QUESTIONS.find(q => q.id === id)).filter(Boolean);
+      html += `<div class="wz-review-section">
+        <div class="wz-review-section-header">
+          <span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block;flex-shrink:0"></span>
+          ${s.name} <span style="font-weight:400;color:#999">(${items.length} item${items.length !== 1 ? 's' : ''})</span>
+        </div>
+        ${items.map((q, i) => {
+          const txt = q.text.length > 80 ? q.text.slice(0, 80) + '…' : q.text;
+          const tag = typeLabels[q.type] || q.type;
+          return `<div class="wz-review-item"><span class="wz-review-item-num">${i + 1}.</span><span style="flex:1">${txt}</span><span class="wz-q-tag wz-tag-${q.type}" style="flex-shrink:0;align-self:flex-start">${tag}</span></div>`;
+        }).join('')}
+      </div>`;
+    });
+    panel.innerHTML = html;
+  }
+
+  document.querySelectorAll('.test-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const cells = row.querySelectorAll('td');
+      const name   = cells[0] ? cells[0].querySelector('.td-title')?.textContent.trim() : '';
+      const type   = cells[1] ? cells[1].textContent.trim() : '';
+      const items  = cells[2] ? cells[2].textContent.trim() : '';
+      const points = cells[3] ? cells[3].textContent.trim() : '';
+      const date   = cells[4] ? cells[4].textContent.trim() : '';
+      const status = cells[5] ? cells[5].textContent.trim() : '';
+
+      // Header title
+      document.getElementById('detail-title').textContent = name;
+      const statusEl = document.getElementById('detail-title-status');
+      if (statusEl) {
+        statusEl.textContent = status;
+        statusEl.className = 'status-badge ' + status.toLowerCase();
+      }
+
+      // Populate view fields and inputs
+      const set = (vfId, inId, val) => {
+        const vf = document.getElementById(vfId); if (vf) vf.textContent = val;
+        const inp = document.getElementById(inId);
+        if (inp) { if (inp.tagName === 'TEXTAREA') inp.textContent = val; else inp.value = val; }
+      };
+      set('detail-vf-name',        'detail-in-name',        name);
+      set('detail-vf-type',        'detail-in-type',        type);
+      set('detail-vf-status',      'detail-in-status',      status);
+      set('detail-vf-date',        'detail-in-date',        date);
+      set('detail-vf-description', 'detail-in-description', '');
+
+      const testId = parseInt(row.getAttribute('data-test'), 10);
+      renderDetailStructure(testId);
+
+      setMetadataMode('view');
+      showPage('view-test', 'test-management');
+    });
+  });
+
+  // ── Detail page: back button ──
+  document.getElementById('detail-back-btn').addEventListener('click', () => {
+    setMetadataMode('view');
+    showPage('test-management');
+  });
+
+  // ── Detail page: Edit button ──
+  document.getElementById('btn-detail-edit').addEventListener('click', () => {
+    setMetadataMode('edit');
+  });
+
+  // ── Detail page: metadata Save ──
+  document.getElementById('btn-metadata-save').addEventListener('click', () => {
+    setMetadataMode('view');
+  });
+
+  // ── Detail page: metadata Cancel ──
+  document.getElementById('btn-metadata-cancel').addEventListener('click', () => {
+    setMetadataMode('view');
+  });
+
+  // ── Detail page: Preview ──
+  document.getElementById('btn-detail-preview').addEventListener('click', () => {
+    // no-op for prototype
+  });
+
+  // ── Detail page: Delete → back to list ──
+  document.getElementById('btn-detail-delete').addEventListener('click', () => {
+    if (confirm('Are you sure you want to delete this test? This action cannot be undone.')) {
+      showPage('test-management');
+    }
+  });
+
+  // ── Toggle metadata edit / view mode ──
+  function setMetadataMode(mode) {
+    const body = document.getElementById('metadata-body');
+    const saveActions = document.getElementById('metadata-save-actions');
+    const editBtn = document.getElementById('btn-detail-edit');
+
+    if (mode === 'edit') {
+      body.className = 'panel-body edit-mode';
+      saveActions.style.display = 'flex';
+      editBtn.style.display = 'none';
+    } else {
+      body.className = 'panel-body view-mode';
+      saveActions.style.display = 'none';
+      editBtn.style.display = '';
+    }
+  }
+
+  // ── New Test ──
+  document.getElementById('btn-create-test').addEventListener('click', () => {
+    showPage('create-test', 'test-management');
+  });
+
+  // ── Create: back / cancel ──
+  document.getElementById('btn-create-cancel').addEventListener('click', () => showPage('test-management'));
+  document.getElementById('create-back-btn').addEventListener('click', () => { wzReset(); showPage('test-management'); });
+
+  // ── Wizard ──────────────────────────────────────────────────────────────────
+  const WZ_COLORS = ['#2a3766','#75138c','#2dbe6c','#ff8c42','#4a6cf7','#00cec9','#fd79a8','#c45000'];
+  const WZ_DURATION_LABELS = ['15m','30m','45m','1h','1.5h','2h'];
+  const WZ_COURSE_LABELS = {
+    'grade1-math':'Grade 1 Mathematics','grade1-ela':'Grade 1 English Language Arts',
+    'grade2-math':'Grade 2 Mathematics','grade2-ela':'Grade 2 English Language Arts',
+    'grade3-math':'Grade 3 Mathematics','grade3-ela':'Grade 3 English Language Arts',
+    'grade4-math':'Grade 4 Mathematics','grade4-ela':'Grade 4 English Language Arts',
+    'grade5-math':'Grade 5 Mathematics','grade5-ela':'Grade 5 English Language Arts',
+  };
+
+  const WZ_QUESTIONS = [
+    { id:1,  text:"What is 3x + 5 = 14? Solve for x.", type:"sa" },
+    { id:2,  text:"Simplify: 2(x + 3) − x", type:"sa" },
+    { id:3,  text:"Which of these is a linear equation? (A) x² = 9  (B) 2x + 1 = 7  (C) x³ = 27  (D) √x = 4", type:"mc" },
+    { id:4,  text:"True or False: x + x = x²", type:"tf" },
+    { id:5,  text:"Expand and simplify: (x + 2)(x − 3)", type:"sa" },
+    { id:6,  text:"Solve: 2x + y = 10 and x − y = 2", type:"sa" },
+    { id:7,  text:"What is the slope of y = 4x − 7?", type:"mc" },
+    { id:8,  text:"What fraction is equivalent to 0.75?", type:"mc" },
+    { id:9,  text:"Calculate: ¾ + ⅝", type:"sa" },
+    { id:10, text:"True or False: ½ × ½ = ¼", type:"tf" },
+    { id:11, text:"Convert 2⅓ to an improper fraction.", type:"sa" },
+    { id:12, text:"Which is larger: ⅗ or ⅔?", type:"mc" },
+    { id:13, text:"Calculate: 1¾ ÷ ½", type:"sa" },
+    { id:14, text:"What is the area of a triangle with base 8 cm and height 5 cm?", type:"sa" },
+    { id:15, text:"True or False: All squares are rectangles.", type:"tf" },
+    { id:16, text:"A circle has radius 7 cm. What is its circumference? (π ≈ 3.14)", type:"sa" },
+    { id:17, text:"What is 15% of 200?", type:"sa" },
+    { id:18, text:"A shirt costs $40, discounted by 25%. What is the sale price?", type:"mc" },
+    { id:19, text:"True or False: 110% of 50 is greater than 50.", type:"tf" },
+    { id:20, text:"Calculate the mean of: 4, 8, 15, 16, 23, 42", type:"sa" },
+  ];
+
+  const wz = {
+    step:1, testName:'', testType:'formative', course:'', startDate:'', endDate:'', accessCode:'',
+    sections:[], selections:{}, activeSection:null, activeFilters:new Set(),
+    deployNow:true, assignAll:true, duration:3
+  };
+
+  // ── All items assigned globally (across all sections) ──
+  function wzAllAssigned() {
+    const assigned = new Set();
+    Object.values(wz.selections).forEach(ids => ids.forEach(id => assigned.add(id)));
+    return assigned;
+  }
+
+  function wzReset() {
+    Object.assign(wz, { step:1, testName:'', testType:'formative', course:'', startDate:'', endDate:'', accessCode:'',
+      sections:[], selections:{}, activeSection:null, activeFilters:new Set(), deployNow:true, assignAll:true, duration:3 });
+    ['wz-test-name'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('wz-test-course').value = '';
+    document.getElementById('wz-new-section-input').value = '';
+    document.getElementById('wz-search-input').value = '';
+    document.querySelectorAll('.wz-chip').forEach(c => c.classList.remove('active'));
+    wzRenderSections();
+    [1,2,3,4].forEach(i => {
+      document.getElementById('wz-step-'+i).classList.toggle('wz-hidden', i !== 1);
+      const tab = document.getElementById('wz-step-tab-'+i);
+      tab.classList.remove('active','done');
+      if (i === 1) tab.classList.add('active');
+    });
+  }
+
+  function wzGoToStep(n) {
+    if (n === wz.step) return;
+    // Validate forward navigation; allow backward freely
+    if (n > wz.step) {
+      if (n > 1) {
+        const name = document.getElementById('wz-test-name').value.trim();
+        if (!name) { wzShowToast('Please enter a test name first'); return; }
+        wz.testName = name;
+        wz.course = document.getElementById('wz-test-course').value;
+      }
+      if (n > 2 && wz.sections.length === 0) { wzShowToast('Add at least one section first'); return; }
+    } else {
+      if (wz.step === 1) {
+        wz.testName = document.getElementById('wz-test-name').value.trim();
+        wz.course = document.getElementById('wz-test-course').value;
+      }
+    }
+    const prevStep = wz.step;
+    const isForward = n > prevStep;
+    wz.step = n;
+
+    // Update tab states
+    [1,2,3,4].forEach(i => {
+      const tab = document.getElementById('wz-step-tab-'+i);
+      tab.classList.remove('active','done');
+      if (i === n) tab.classList.add('active');
+      else if (i < n) tab.classList.add('done');
+    });
+
+    const prevEl = document.getElementById('wz-step-' + prevStep);
+    const nextEl = document.getElementById('wz-step-' + n);
+
+    // Animate exit
+    prevEl.classList.add(isForward ? 'wz-exit-left' : 'wz-exit-right');
+
+    setTimeout(() => {
+      prevEl.classList.remove('wz-exit-left', 'wz-exit-right');
+      prevEl.classList.add('wz-hidden');
+
+      nextEl.classList.remove('wz-hidden');
+      nextEl.classList.add(isForward ? 'wz-enter-right' : 'wz-enter-left');
+
+      if (n === 3) wzRenderStep3();
+      if (n === 4) wzRenderReviewItems();
+
+      setTimeout(() => nextEl.classList.remove('wz-enter-right', 'wz-enter-left'), 500);
+    }, 180);
+  }
+
+  // ── Step 2: Sections with drag-and-drop ──
+  let wzDragSrcId = null, wzDragTargetId = null, wzDropHandled = false;
+
+  function wzAddSection() {
+    const input = document.getElementById('wz-new-section-input');
+    const name = input.value.trim(); if (!name) return;
+    const id = Date.now();
+    wz.sections.push({ id, name, color: WZ_COLORS[wz.sections.length % WZ_COLORS.length] });
+    wz.selections[id] = [];
+    input.value = '';
+    wzRenderSections();
+    input.focus();
+  }
+
+  function wzRemoveSection(id) {
+    // Also remove any sub-sections belonging to this section
+    wz.sections.filter(s => s.parentId === id).forEach(c => delete wz.selections[c.id]);
+    wz.sections = wz.sections.filter(s => s.id !== id && s.parentId !== id);
+    delete wz.selections[id];
+    wzRenderSections();
+  }
+
+  function wzRenderSections() {
+    const list = document.getElementById('wz-sections-list');
+    const topLevel = wz.sections.filter(s => !s.parentId);
+    list.innerHTML = topLevel.map(s => {
+      const subs = wz.sections.filter(x => x.parentId === s.id);
+      const topIdx = wz.sections.indexOf(s);
+      return `
+        <div class="wz-section-item" draggable="true" data-id="${s.id}"
+          ondragstart="wzDragStart(event,${s.id})" ondragover="wzDragOver(event,${s.id})"
+          ondrop="wzDrop(event,${s.id})" ondragleave="wzDragLeave(event)" ondragend="wzDragEnd(event)">
+          <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
+          <span class="wz-section-color" style="background:${s.color}"></span>
+          <input type="text" value="${wzEsc(s.name)}" onchange="wz.sections[${topIdx}].name=this.value" placeholder="Section name">
+          <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${s.id})">✕</button>
+        </div>
+        ${subs.map(sub => {
+          const subIdx = wz.sections.indexOf(sub);
+          return `
+            <div class="wz-section-item wz-section-sub" draggable="true" data-id="${sub.id}" data-parent-id="${sub.parentId}"
+              ondragstart="wzDragStart(event,${sub.id})" ondragover="wzDragOver(event,${sub.id})"
+              ondrop="wzDrop(event,${sub.id})" ondragleave="wzDragLeave(event)" ondragend="wzDragEnd(event)">
+              <span class="wz-drag-handle" title="Drag to reorder">⠿</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-right:-4px"><polyline points="9 18 15 12 9 6"/></svg>
+              <span style="width:8px;height:8px;border-radius:50%;background:${sub.color};flex-shrink:0"></span>
+              <input type="text" value="${wzEsc(sub.name)}" onchange="wz.sections[${subIdx}].name=this.value" placeholder="Sub-section name">
+              <button class="btn-ghost" style="padding:4px 8px;font-size:11px;border-radius:4px" onclick="wzRemoveSection(${sub.id})">✕</button>
+            </div>`;
+        }).join('')}
+        <div class="wz-sub-dropzone" data-parent-id="${s.id}"
+          ondragover="wzSubDropZoneOver(event,${s.id})" ondragleave="wzSubDropZoneLeave(event,${s.id})"
+          ondrop="wzSubDrop(event,${s.id})">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          Drop here to nest as sub-section
+        </div>`;
+    }).join('');
+  }
+
+  function wzDragStart(e, id) {
+    wzDragSrcId = id;
+    wzDragTargetId = id;
+    wzDropHandled = false;
+    e.dataTransfer.effectAllowed = 'move';
+    requestAnimationFrame(() => {
+      e.currentTarget.classList.add('wz-dragging');
+      document.getElementById('wz-sections-list').classList.add('wz-drag-active');
+      // Hide this section's own drop zone so it can't nest into itself
+      const srcZone = document.querySelector(`.wz-sub-dropzone[data-parent-id="${id}"]`);
+      if (srcZone) srcZone.classList.add('wz-drag-src-zone');
+    });
+  }
+  function wzDragOver(e, id) {
+    const src = wz.sections.find(s => s.id === wzDragSrcId);
+    const tgt = wz.sections.find(s => s.id === id);
+    if (!src || !tgt) return;
+    // Only allow reorder within the same level (both top-level, or same parent)
+    if (src.parentId !== tgt.parentId) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    if (wzDragTargetId === id) return;
+    wzDragTargetId = id;
+    wzApplyDragTransforms();
+  }
+  function wzApplyDragTransforms() {
+    const srcSection = wz.sections.find(s => s.id === wzDragSrcId);
+    const tgtSection = wz.sections.find(s => s.id === wzDragTargetId);
+    if (!srcSection || !tgtSection) return;
+    const isTopLevel = !srcSection.parentId;
+    const levelSections = isTopLevel
+      ? wz.sections.filter(s => !s.parentId)
+      : wz.sections.filter(s => s.parentId === srcSection.parentId);
+    const items = isTopLevel
+      ? [...document.querySelectorAll('.wz-section-item:not(.wz-section-sub)')]
+      : [...document.querySelectorAll(`.wz-section-item.wz-section-sub[data-parent-id="${srcSection.parentId}"]`)];
+    const src = levelSections.findIndex(s => s.id === wzDragSrcId);
+    const tgt = levelSections.findIndex(s => s.id === wzDragTargetId);
+    items.forEach((el, i) => {
+      if (i === src) { el.style.transform = ''; return; }
+      const h = el.offsetHeight + 8;
+      let shift = 0;
+      if (src < tgt && i > src && i <= tgt) shift = -h;
+      else if (src > tgt && i >= tgt && i < src) shift = h;
+      el.style.transform = shift ? `translateY(${shift}px)` : '';
+    });
+  }
+  function wzDragLeave(e) { /* no-op */ }
+  function wzDragEnd(e) {
+    const srcId = wzDragSrcId;
+    const tgtId = wzDragTargetId;
+    const handled = wzDropHandled;
+    document.querySelectorAll('.wz-section-item').forEach(el => {
+      el.classList.remove('wz-dragging');
+      el.style.transform = '';
+    });
+    document.getElementById('wz-sections-list').classList.remove('wz-drag-active');
+    document.querySelectorAll('.wz-sub-dropzone').forEach(z => z.classList.remove('wz-drag-src-zone','wz-nest-over'));
+    wzDragSrcId = null; wzDragTargetId = null; wzDropHandled = false;
+    if (handled) { wzRenderSections(); return; }
+    if (srcId !== null && tgtId !== null && srcId !== tgtId) {
+      const srcSection = wz.sections.find(s => s.id === srcId);
+      const tgtSection = wz.sections.find(s => s.id === tgtId);
+      if (srcSection && tgtSection && srcSection.parentId === tgtSection.parentId) {
+        const srcIdx = wz.sections.indexOf(srcSection);
+        const tgtIdx = wz.sections.indexOf(tgtSection);
+        const moved = wz.sections.splice(srcIdx, 1)[0];
+        wz.sections.splice(tgtIdx, 0, moved);
+        wzRenderSections();
+      }
+    }
+  }
+  function wzDrop(e, id) {
+    e.preventDefault();
+    wzDragTargetId = id;
+  }
+  function wzSubDropZoneOver(e, parentId) {
+    const srcSection = wz.sections.find(s => s.id === wzDragSrcId);
+    // Only top-level sections can be nested; sub-sections cannot nest further
+    if (!srcSection || srcSection.parentId || wzDragSrcId === parentId) return;
+    const parentSection = wz.sections.find(s => s.id === parentId);
+    if (!parentSection || parentSection.parentId) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+    // Clear reorder transforms when hovering nest zone
+    document.querySelectorAll('.wz-section-item').forEach(el => el.style.transform = '');
+    document.querySelector(`.wz-sub-dropzone[data-parent-id="${parentId}"]`)?.classList.add('wz-nest-over');
+  }
+  function wzSubDropZoneLeave(e, parentId) {
+    document.querySelector(`.wz-sub-dropzone[data-parent-id="${parentId}"]`)?.classList.remove('wz-nest-over');
+  }
+  function wzSubDrop(e, parentId) {
+    e.preventDefault();
+    const srcSection = wz.sections.find(s => s.id === wzDragSrcId);
+    if (!srcSection || srcSection.parentId || wzDragSrcId === parentId) return;
+    const parentSection = wz.sections.find(s => s.id === parentId);
+    if (!parentSection || parentSection.parentId) return;
+    srcSection.parentId = parentId;
+    wzDropHandled = true;
+  }
+
+  // ── Step 3: Items ──
+  function wzRenderStep3() {
+    if (!wz.activeSection || !wz.sections.find(s => s.id === wz.activeSection))
+      wz.activeSection = wz.sections[0]?.id || null;
+    wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected();
+  }
+
+  function wzRenderSectionTabs() {
+    document.getElementById('wz-section-tabs').innerHTML = wz.sections.map(s => `
+      <div class="wz-section-tab ${s.id === wz.activeSection ? 'active' : ''}" onclick="wzSwitchSection(${s.id})">
+        <span class="wz-tab-dot" style="background:${s.color}"></span>
+        ${wzEsc(s.name)}<span class="wz-tab-count">${(wz.selections[s.id]||[]).length}</span>
+      </div>`).join('');
+  }
+
+  function wzSwitchSection(id) { wz.activeSection = id; wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected(); }
+
+  function wzToggleFilter(el, filter) {
+    if (wz.activeFilters.has(filter)) {
+      wz.activeFilters.delete(filter);
+      el.classList.remove('active');
+    } else {
+      wz.activeFilters.add(filter);
+      el.classList.add('active');
+    }
+    wzFilterQuestions();
+  }
+
+  function wzFilterQuestions() {
+    const search = (document.getElementById('wz-search-input').value || '').toLowerCase();
+    const activeSel = new Set(wz.selections[wz.activeSection] || []);
+    const allAssigned = wzAllAssigned();
+
+    const activeFilters = wz.activeFilters;
+    const filtered = WZ_QUESTIONS.filter(q => {
+      // Hide items already assigned to any section
+      if (allAssigned.has(q.id)) return false;
+      const matchSearch = !search || q.text.toLowerCase().includes(search);
+      const matchType = !activeFilters || activeFilters.size === 0 || activeFilters.has(q.type);
+      return matchSearch && matchType;
+    });
+
+    document.getElementById('wz-bank-count').textContent = filtered.length + ' items';
+    const typeLabels = { mc:'Multiple Choice', tf:'True / False', sa:'Short Answer' };
+    const list = document.getElementById('wz-question-list');
+    if (!filtered.length) {
+      list.innerHTML = `<div class="wz-empty-state"><div class="wz-empty-icon">🔍</div><div class="wz-empty-text">No items match your filter</div></div>`;
+      return;
+    }
+    list.innerHTML = filtered.map(q => {
+      return `<div class="wz-q-item" onclick="wzAddQuestion(${q.id})">
+        <span class="wz-q-add-icon">+</span>
+        <div><div class="wz-q-text">${wzEsc(q.text)}</div>
+        <div class="wz-q-meta"><span class="wz-q-tag wz-tag-${q.type}">${typeLabels[q.type]}</span></div>
+        </div></div>`;
+    }).join('');
+  }
+
+  function wzAddQuestion(qId) {
+    if (!wz.activeSection) return;
+    const sel = wz.selections[wz.activeSection];
+    if (!sel.includes(qId)) { sel.push(qId); wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected(); }
+  }
+
+  function wzRemoveQuestion(qId) {
+    if (!wz.activeSection) return;
+    wz.selections[wz.activeSection] = wz.selections[wz.activeSection].filter(id => id !== qId);
+    wzRenderSectionTabs(); wzFilterQuestions(); wzRenderSelected();
+  }
+
+  function wzRenderSelected() {
+    const sel = wz.selections[wz.activeSection] || [];
+    document.getElementById('wz-selected-count').textContent = sel.length;
+    const list = document.getElementById('wz-selected-list');
+    if (!sel.length) {
+      list.innerHTML = `<div class="wz-empty-state"><div class="wz-empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div class="wz-empty-text">Click an item to add it<br>to this section</div></div>`;
+      return;
+    }
+    list.innerHTML = sel.map((qId, i) => {
+      const q = WZ_QUESTIONS.find(x => x.id === qId); if (!q) return '';
+      const txt = q.text.length > 80 ? q.text.slice(0,80)+'…' : q.text;
+      return `<div class="wz-sel-item">
+        <span class="wz-sel-num">${i+1}</span>
+        <div class="wz-sel-text">${wzEsc(txt)}</div>
+        <button class="btn-ghost" style="padding:3px 7px;font-size:11px;border-radius:4px;flex-shrink:0" onclick="wzRemoveQuestion(${qId})">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Step 4: Schedule ──
+  const WZ_STUDENTS = [
+    'Alice Johnson','Bob Smith','Charlie Brown','Diana Prince','Edward Miller',
+    'Fiona Green','George White','Hannah Lee','Ian Davis','Julia Clark',
+    'Kevin Martinez','Laura Thompson','Michael Wilson','Nancy Moore','Oscar Taylor',
+    'Patricia Anderson','Quinn Jackson','Rachel Harris','Sam Williams','Tina Martin',
+    'Uma Walker','Victor Hall','Wendy Allen','Xavier Young'
+  ];
+  let wzSelectedStudents = new Set();
+
+  function wzUpdateDuration(val) {
+    wz.duration = parseInt(val);
+    document.querySelectorAll('.wz-duration-preset').forEach((el,i) => el.classList.toggle('wz-duration-active', i === wz.duration));
+    document.getElementById('wz-sum-duration').textContent = WZ_DURATION_LABELS[wz.duration];
+  }
+
+  function wzSetDuration(val) {
+    wz.duration = val;
+    document.getElementById('wz-duration-slider').value = val;
+    wzUpdateDuration(val);
+  }
+
+  function wzUpdateDeployRadio() {
+    const now = document.querySelector('input[name="wz-deploy"]:checked').value === 'now';
+    wz.deployNow = now;
+    document.getElementById('wz-deploy-now-card').classList.toggle('wz-radio-selected', now);
+    document.getElementById('wz-deploy-later-card').classList.toggle('wz-radio-selected', !now);
+    document.getElementById('wz-schedule-datetime').style.display = now ? 'none' : 'block';
+    document.getElementById('wz-sum-opens').textContent = now ? 'Immediately upon creation' : 'Scheduled for later';
+  }
+
+  function wzUpdateAssignRadio() {
+    const all = document.querySelector('input[name="wz-assign"]:checked').value === 'all';
+    wz.assignAll = all;
+    document.getElementById('wz-assign-all-card').classList.toggle('wz-radio-selected', all);
+    document.getElementById('wz-assign-specific-card').classList.toggle('wz-radio-selected', !all);
+    document.getElementById('wz-students-panel').style.display = all ? 'none' : 'block';
+    if (!all) { wzFilterStudents(); }
+    document.getElementById('wz-sum-assigned').textContent = all ? 'All students (24)' : wzSelectedStudentsLabel();
+  }
+
+  function wzSelectedStudentsLabel() {
+    const n = wzSelectedStudents.size;
+    return n === 0 ? 'No students selected' : `${n} student${n!==1?'s':''} selected`;
+  }
+
+  function wzFilterStudents() {
+    const search = (document.getElementById('wz-student-search').value || '').toLowerCase();
+    const filtered = WZ_STUDENTS.filter(s => !search || s.toLowerCase().includes(search));
+    const list = document.getElementById('wz-student-list');
+    list.innerHTML = filtered.map(s => {
+      const sel = wzSelectedStudents.has(s);
+      return `<div class="wz-student-item ${sel?'selected':''}" onclick="wzToggleStudent('${wzEsc(s)}')">
+        <div class="wz-student-cb">${sel?'✓':''}</div>
+        <span>${wzEsc(s)}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('wz-student-count').textContent = `${wzSelectedStudents.size} of 24 students selected`;
+  }
+
+  function wzToggleStudent(name) {
+    if (wzSelectedStudents.has(name)) wzSelectedStudents.delete(name);
+    else wzSelectedStudents.add(name);
+    wzFilterStudents();
+    document.getElementById('wz-sum-assigned').textContent = wzSelectedStudentsLabel();
+  }
+
+  function wzRenderReviewItems() {
+    const totalItems = Object.values(wz.selections).reduce((a,b) => a+b.length, 0);
+    const typeLabels = { mc:'MC', tf:'T/F', sa:'SA' };
+    let html = '';
+    if (totalItems === 0) {
+      html = `<div style="font-size:12px;color:#bbb;padding:4px 0">No items selected yet</div>`;
+    } else {
+      wz.sections.forEach(s => {
+        const qIds = wz.selections[s.id] || [];
+        if (!qIds.length) return;
+        html += `<div class="wz-review-section">
+          <div class="wz-review-section-header">
+            <span style="width:8px;height:8px;border-radius:50%;background:${s.color};display:inline-block;flex-shrink:0"></span>
+            ${wzEsc(s.name)} <span style="font-weight:400;color:#999">(${qIds.length} item${qIds.length!==1?'s':''})</span>
+          </div>
+          ${qIds.map((qId,i) => {
+            const q = WZ_QUESTIONS.find(x=>x.id===qId); if(!q) return '';
+            const txt = q.text.length>90 ? q.text.slice(0,90)+'…' : q.text;
+            return `<div class="wz-review-item"><span class="wz-review-item-num">${i+1}.</span><span>${wzEsc(txt)}</span></div>`;
+          }).join('')}
+        </div>`;
+      });
+    }
+    document.getElementById('wz-review-sections').innerHTML = html;
+  }
+
+  function wzRenderScheduleSummary() {
+    const courseLabel = WZ_COURSE_LABELS[wz.course] || wz.course || '—';
+    document.getElementById('wz-sum-name').textContent = wz.testName || '—';
+    document.getElementById('wz-sum-course').textContent = courseLabel;
+    document.getElementById('wz-sum-type').textContent = 'Formative';
+    document.getElementById('wz-sum-opens').textContent = wz.deployNow ? 'Immediately upon creation' : 'Scheduled for later';
+    document.getElementById('wz-sum-assigned').textContent = wz.assignAll ? 'All students (24)' : wzSelectedStudentsLabel();
+    document.getElementById('wz-sum-duration').textContent = WZ_DURATION_LABELS[wz.duration];
+    wzRenderReviewItems();
+    // Reset radio state visually to match wz state
+    document.querySelector('input[name="wz-deploy"][value="'+(wz.deployNow?'now':'later')+'"]').checked = true;
+    document.getElementById('wz-deploy-now-card').classList.toggle('wz-radio-selected', wz.deployNow);
+    document.getElementById('wz-deploy-later-card').classList.toggle('wz-radio-selected', !wz.deployNow);
+    document.getElementById('wz-schedule-datetime').style.display = wz.deployNow ? 'none' : 'block';
+    document.querySelector('input[name="wz-assign"][value="'+(wz.assignAll?'all':'specific')+'"]').checked = true;
+    document.getElementById('wz-assign-all-card').classList.toggle('wz-radio-selected', wz.assignAll);
+    document.getElementById('wz-assign-specific-card').classList.toggle('wz-radio-selected', !wz.assignAll);
+    document.getElementById('wz-students-panel').style.display = wz.assignAll ? 'none' : 'block';
+  }
+
+  function wzEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  let wzToastTimer;
+  function wzShowToast(msg) {
+    const t = document.getElementById('wz-toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(wzToastTimer);
+    wzToastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  document.getElementById('wz-btn-cancel').addEventListener('click', () => { wzReset(); showPage('test-management'); });
+  document.getElementById('wz-btn-draft').addEventListener('click', () => {
+    wzShowToast('Draft saved');
+    setTimeout(() => { wzReset(); showPage('test-management'); }, 1500);
+  });
+  document.getElementById('wz-btn-save').addEventListener('click', () => {
+    wzShowToast('✓ Assessment created successfully!');
+    setTimeout(() => { wzReset(); showPage('test-management'); }, 1500);
+  });
+</script>
+
+<div class="wz-toast" id="wz-toast"></div>
+</body>
+</html>
